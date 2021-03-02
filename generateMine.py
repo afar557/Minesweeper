@@ -1,3 +1,5 @@
+import random
+
 def generateMinesGrid(dimension, numMines):
     grid = [['?' for x in range(dimension)] for y in range(dimension)]
     while numMines >0:
@@ -18,3 +20,9 @@ def generateMinesGrid(dimension, numMines):
     for row in grid:
         print(row)
     return grid
+        
+def generateUserGrid(dimension):
+    grid = [['?' for x in range(dimension)] for y in range(dimension)]
+    return grid
+
+# generateMinesGrid(5, 2)
