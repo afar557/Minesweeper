@@ -8,21 +8,6 @@ def main():
     dimension = 5
     grid = generateMinesGrid(dimension, 2)
 
-    # p = 0.2
-    # q = 0.2
-    # start = (0,0)
-    # finish = (dimension-1,dimension-1)
-    # grid = generateFireMaze(dimension,p)
-    # # grid = advance_fire_one_step(grid, 1)
-    # # grid = generateMaze(dimension,p)
-    # # print(grid)
-    # # grid = aStar(grid, (0,0), (9,9))
-    # # grid = aStar(grid, (0,0), (9,9))
-    # # grid = bfsStrat1(grid, start, finish, q)
-    # # grid = bfsStrat2(grid, start, finish, q)
-    # grid = driver(grid, start, finish, q)
-
-
     # Define colors for maze
     BLACK = (0, 0, 0)
     GRAY = (105, 105, 105)
@@ -60,26 +45,16 @@ def main():
         # Set the screen background
         screen.fill(BLACK)
 
-        font=pygame.font.SysFont('arial', 10)
-
+        font=pygame.font.SysFont('arial', 20)
         # Draw the grid
         for row in range(dimension):
             for column in range(dimension):
                 if type(grid[row][column]) ==int: 
-                    text=font.render(str(grid[row][column]), True, (0, 0, 0))
-                    # screen.blit(text, (300,300))
-
-                    
+                    # text=font.render(str(grid[row][column]), True, (0, 0, 0))        
                     # rect=text.get_rect()
-                    # rect.x=(row)*WIDTH
-                    # rect.y=(column)*WIDTH
-                    # rect.centerx =(row) *WIDTH
-                    # rect.centery = (column)*WIDTH
-
-                    # # # rect.bottomleft=(0, 2)
-                    # # screen.fill((255, 255, 255))
-                    screen.blit(text, ((row)*(WIDTH)+ MARGIN+1,(column)*(WIDTH)+ MARGIN+1) )
-                    # pygame.display.update()
+                    # rect.x=(column*(WIDTH+MARGIN)) + MARGIN
+                    # rect.y=(row*(WIDTH+MARGIN)) + MARGIN
+                    # screen.blit(text, rect)
                     color = GREEN
                 elif grid[row][column] == 'M':
                     color = RED
@@ -107,6 +82,15 @@ def main():
         # Limit to 60 frames per second
         clock.tick(60)
 
+        # Adds number of neighbors that are mines into the board
+        for x in range(dimension):
+            for y in range(dimension):
+                if type(grid[x][y]) == int: 
+                    text=font.render(str(grid[x][y]), True, (0, 0, 0))        
+                    rect=text.get_rect()
+                    rect.x=(y*(WIDTH+MARGIN)) + MARGIN
+                    rect.y=(x*(WIDTH+MARGIN)) + MARGIN
+                    screen.blit(text, rect)
     
         # Go ahead and update the screen with what we've drawn.
         pygame.display.flip()
