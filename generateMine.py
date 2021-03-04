@@ -17,8 +17,8 @@ def generateMinesGrid(dimension, numMines):
                     if 0 <= x2 < dimension and 0 <= y2 < dimension and grid[x2][y2]=='M':
                         surroundingMines+=1
                 grid[x][y]= surroundingMines
-    for row in grid:
-        print(row)
+    # for row in grid:
+    #     print(row)
     return grid
         
 def generateUserGrid(dimension):
