@@ -65,7 +65,7 @@ def basicAgent (realGrid):
         # Query the dequeued cell
         if realGrid[currX][currY] == "M":
             # Mark it as a mine
-            userGrid[currX][currY] == 'M'
+            userGrid[currX][currY] = 'M'
             visualizeBoard(userGrid, "basic agent")
 
             # Remove the index from the dictionary

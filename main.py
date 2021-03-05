@@ -8,8 +8,8 @@ from basicagent import basicAgent, finalScore
 
 def main():
 
-    dimension = 5
-    mines = 3
+    dimension = 10
+    mines = 11
     grid = generateMinesGrid(dimension, mines)
     usergrid = basicAgent(grid)
     visualizeBoard(usergrid, "final basic agent")
