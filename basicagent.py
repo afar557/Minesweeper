@@ -43,6 +43,7 @@ def basicAgent (realGrid):
     for i in range(dimension):
         for j in range(dimension):
             cellsDict[(i,j)] = None
+
     # Queue for cells to be uncovered
     queue = deque()
 
@@ -52,15 +53,6 @@ def basicAgent (realGrid):
     while queue:
         # Dequeue the cell
         currX, currY = queue.popleft()
-        if (currX,currY) not in cellsDict:
-            if not queue:
-                if len(cellsDict)==0:
-                    print("Returning inside while line 59")
-                    return userGrid
-
-                # Pick a random index from dict and enqueue it
-                queue.append( random.choice(list(cellsDict.keys())) )
-            continue
 
         # Query the dequeued cell
         if realGrid[currX][currY] == "M":
@@ -73,7 +65,9 @@ def basicAgent (realGrid):
 
             # Pick another random cell and queue it
             if len(cellsDict)!=0:
-                queue.append( random.choice(list(cellsDict.keys())) )
+                randIndex = random.choice(list(cellsDict.keys()))
+                if randIndex not in queue:
+                    queue.append(randIndex)
         
         else:
             # Get the clue from the real grid
@@ -95,18 +89,22 @@ def basicAgent (realGrid):
                     cellsDict.pop((x,y))
                 visualizeBoard(userGrid, "basic agent")
             
-            if (numofneigh-clue)-len(hoodState["safeSquares"])==len(hoodState["hidden"]):
+            elif (numofneigh-clue)-len(hoodState["safeSquares"])==len(hoodState["hidden"]):
                 # Enqueue every cell in hidden
                 for x,y in hoodState["hidden"]:
-                    queue.append((x,y))
+                    if (x,y) not in queue:
+                        queue.append((x,y))
 
         if len(queue)==0:
             if len(cellsDict)!=0:
                 # Pick a random index from dict and enqueue it
-                queue.append( random.choice(list(cellsDict.keys())) )
+                randIndex = random.choice(list(cellsDict.keys()))
+                while randIndex in queue:
+                    randIndex = random.choice(list(cellsDict.keys()))
+
+                queue.append(randIndex)
 
     for x,y in cellsDict:
         userGrid[x][y] = 'm'
     visualizeBoard(userGrid, "basic agent")
-    print("Returning outside while")
     return userGrid
