@@ -1,12 +1,7 @@
 from basicagent import updateKnowledge, addEquationToKnowledge
 from sympy import *
 
-# import updateKnowledge()
-
-# import addEquationToKnowledge()
-
 # always do advanced inference on knowledge before calling probability
-
 
 # {A:,B:,C:,D:,E:,F:}
 
@@ -16,29 +11,37 @@ from sympy import *
 # stack:A,B
 # {A:0,B:0,C:1,D:1,E:,F:}
 
+
+
+
 # calculate probability(knowledge)
 # stack = []
-# cellsInKnowledge = {}
-
-# for every eqn in knowledge:
-#   for cell:
-#       cellsInKnowledge[cell] = None
+# possibilities = []
 # 
-# for cell in cellsInKnowledge:
-#   if cellsInKnowledge[cell] == None:
-#       stack.append(cell)
-#       cellsInKnowledge[cell] = 0
-#       for every eqn in knowledge:
-#           if eqn[1] == 0:
-#               for cell2 in eqn[0]:
-#                   if cell2 != cell1 
-#                       if cellsInKnowledge[cell2] == None:
-#                           cellsInKnowledge[cell2] = 0
-#                       elif cellsInKnowledge[cell2] == 1:
-#                           stack.pop()
-#                           
-#           elif :  to calculate sum of unknown cells                     
-#           
+# while(true):
+#   cellsInKnowledge = {}
+#   
+#   for every eqn in knowledge:
+#       for cell:
+#         cellsInKnowledge[cell] = None
+# 
+#   knowledge2 = deepcopy(knowledge)
+# 
+#   for cell in cellsInKnowledge:
+#       if cellsInKnowledge[cell] == None:
+#           stack.append((cell,knowledge2))
+#           cellsInKnowledge[cell] = 0
+#           knowledge2 = runAdvanced 
+#   possibilities.append(cellInKnowledge)
+#   
+#   val,knowledge2 = stack.pop()
+#   cellsInKnowledge[cell] = 1
+#   knowledge2 = runAdvanced(knowledge2)
+#   
+#   if len(stack) == 0:
+#       break
+
+
 
 # advancedInference
 #   create the matrix
@@ -90,7 +93,8 @@ def advancedInference(knowledge):
     for i in range(M_rref.shape[0]):
         if M_rref[i, M_rref.shape[1]-1] == 0:
             for j in range(M_rref.shape[1]-1):
-                inferredVars[ M_rref[i,j] ] = 0
+                if M_rref[i,j] != 0:
+                    inferredVars[ M_rref[i,j] ] = 0
         else:
             for j in range(M_rref.shape[1]-1):
                 if (M_rref[i, M_rref.shape[1]-1] > 0 and M_rref[i,j] > 0) or (M_rref[i, M_rref.shape[1]-1] < 0 and M_rref[i,j] < 0):
@@ -116,13 +120,13 @@ def advancedInference(knowledge):
 
 advancedInference(knowledge)
 
-# improved agent
-#   while (true):
-#       inferredVars = advancedInference(knowledge)
-#       if len(inferredVars) == 0:
-#           break
-#       else:
-#           update knowledge to remove all of the inferred variables
+def runAdvanced(knowledge):
+    while (true):
+        inferredVars = advancedInference(knowledge)
+        if len(inferredVars) == 0:
+            return knowledge
+        else:
+            # update knowledge to remove all of the inferred variables
 
 # A+B+C=1
 # A+C+D=2

@@ -1,0 +1,4 @@
+Explain advanced inferrence
+ask if we can use outside library to calc rref
+Doesn't our advancedInferrence do basic as well?
+
