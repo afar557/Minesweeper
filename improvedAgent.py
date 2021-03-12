@@ -96,6 +96,7 @@ def advancedInference(knowledge):
                 if (M_rref[i, M_rref.shape[1]-1] > 0 and M_rref[i,j] > 0) or (M_rref[i, M_rref.shape[1]-1] < 0 and M_rref[i,j] < 0):
                     sumOfVars += M_rref[i,j]
             if sumOfVars == M_rref[i, M_rref.shape[1]-1]:
+                print("helloooooo")
                 for j in range(M_rref.shape[1]-1):
                     keys =list(colOfVars.keys())
                     values = list(colOfVars.values())
@@ -103,7 +104,7 @@ def advancedInference(knowledge):
                     if (M_rref[i, M_rref.shape[1]-1] > 0 and M_rref[i,j] > 0) or (M_rref[i, M_rref.shape[1]-1] < 0 and M_rref[i,j] < 0):
                         # make colOfVars an array maybe to improve runtime???
                         inferredVars[ keys[position] ] = 1
-                    else:
+                    elif M_rref[i,j] != 0:
                         inferredVars[ keys[position] ] = 0
             sumOfVars = 0
     print("INFERRED VARS",inferredVars)
@@ -114,6 +115,14 @@ def advancedInference(knowledge):
     # print(M_rref.shape)
 
 advancedInference(knowledge)
+
+# improved agent
+#   while (true):
+#       inferredVars = advancedInference(knowledge)
+#       if len(inferredVars) == 0:
+#           break
+#       else:
+#           update knowledge to remove all of the inferred variables
 
 # A+B+C=1
 # A+C+D=2
