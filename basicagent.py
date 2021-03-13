@@ -4,6 +4,14 @@ from collections import deque
 import random
 from copy import deepcopy
 
+# TODO: change the part when we are updating knowledge (line 176)
+# i = 0
+# while i < len(knowledge):
+#     if len(knowledge[i][0]) == 0:
+#         knowledge.remove(knowledge[i])
+#     else:
+#         i+=1
+
 def finalScore (realGrid, userGrid):
     dimension = len(realGrid)
     score = 0
