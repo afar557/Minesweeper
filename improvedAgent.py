@@ -1,5 +1,7 @@
 from basicagent import updateKnowledge, addEquationToKnowledge
 from sympy import *
+from copy import deepcopy
+from collections import OrderedDict
 
 # always do advanced inference on knowledge before calling probability
 
@@ -11,37 +13,111 @@ from sympy import *
 # stack:A,B
 # {A:0,B:0,C:1,D:1,E:,F:}
 
+def calculateNewKnowledge(inferredVars, knowledge):
+    print("Inferred Variables are:", inferredVars)
+    print("Knowledge base before inferring:")
+    for x in knowledge:
+        print(x)
+    print()
+    for eqn in knowledge:
+        print("Current eq:", eqn)
+        eq0 = deepcopy(eqn[0])
+        # print("Current eq0:", eq0)
+        for var in eq0:
+            # print("Current Var:", var)
+            if var in inferredVars:
+                eqn[0].remove(var)
+                eqn[1] -= inferredVars[var]
+        # if len(eqn[0])==0:
+        #     print("Removed eq:",eqn[0])
+        #     knowledge.remove(eqn)
+        print()
+    print("Knowledge base before removing:")
+    for x in knowledge:
+        print(x)
+    print()
+    i = 0
+    while i < len(knowledge):
+        if len(knowledge[i][0]) == 0:
+            knowledge.remove(knowledge[i])
+        else:
+            i+=1
+    print("Knowledge base after inferring:")
+    for x in knowledge:
+        print(x)
+    print()
+    return knowledge
 
+def calculateprobability(knowledge):
+    stack = []
+    possibilities = []
+    cellsInKnowledge = OrderedDict()
+    inferredVars = {}
 
+    for eqn in knowledge:
+        # print("eqn outside while", eqn)
+        for cell in eqn[0]:
+            # print("cell outside while",cell)
+            cellsInKnowledge[cell] = None
 
-# calculate probability(knowledge)
-# stack = []
-# possibilities = []
-# 
-# while(true):
-#   cellsInKnowledge = {}
-#   
-#   for every eqn in knowledge:
-#       for cell:
-#         cellsInKnowledge[cell] = None
-# 
-#   knowledge2 = deepcopy(knowledge)
-# 
-#   for cell in cellsInKnowledge:
-#       if cellsInKnowledge[cell] == None:
-#           stack.append((cell,knowledge2))
-#           cellsInKnowledge[cell] = 0
-#           knowledge2 = runAdvanced 
-#   possibilities.append(cellInKnowledge)
-#   
-#   val,knowledge2 = stack.pop()
-#   cellsInKnowledge[cell] = 1
-#   knowledge2 = runAdvanced(knowledge2)
-#   
-#   if len(stack) == 0:
-#       break
+    count = 0
+    knowledge2 = deepcopy(knowledge)
+    # print("befor while",cellsInKnowledge)
+    while(true):
+        for cell in cellsInKnowledge:
+            # print("cell in for",cell)
+            cellsInKnowledge2 = deepcopy(cellsInKnowledge)
+            if cellsInKnowledge2[cell] == None:
+                cellsInKnowledge2[cell] = 0
+                stack.append((cell,cellsInKnowledge2))
+                inferredVars[cell] = 0
+                # print("inferredVars after guess", inferredVars)
+                # print("befor", knowledge2)
+                knowledge2 = calculateNewKnowledge(inferredVars, knowledge2)
+                # inferredVars = runAdvanced
+                # print("after", knowledge2)
+                inferredVars = basicInference(knowledge2)
+                
+                # print("this is inferred",inferredVars)
+                for var in inferredVars:
+                    # update the value in cellsInKnowledge
+                    cellsInKnowledge2[var] = inferredVars[var]
 
+        # possibilities.append(cellsInKnowledge2)
+        val,cellsInKnowledge = stack.pop()
+        possibilities.append(cellsInKnowledge)
+        # print(count,": cellsInKnowledge2",cellsInKnowledge2)
+        
+        cellsInKnowledge[cell] = 1
+        knowledge2 = calculateNewKnowledge(inferredVars, knowledge)
+        # inferredVars = runAdvanced(knowledge2)
+        inferredVars = basicInference(knowledge2)
+        
+        # print("length of stack",len(stack))
+        # for item in stack:
+        #     print(item)
+        # print()
 
+        if len(stack) == 0:
+            break
+
+        count+=1
+        if count == 1: break
+    # print("This is possibilities:", possibilities)
+    # for poss in possibilities:
+    #     print(poss)
+
+def basicInference(knowledge):
+    inferredVars = {}
+
+    for equation in knowledge:
+        if len(equation[0]) == equation[1]:
+            for x,y in equation[0]:
+                inferredVars[(x,y)] = 1
+        elif equation[1] == 0:
+            for x,y in equation[0]:
+                inferredVars[(x,y)] = 0
+    return inferredVars
 
 # advancedInference
 #   create the matrix
@@ -51,9 +127,27 @@ from sympy import *
 #       do the inference rules
 #   return None if you cant infer anything
 #   return dict with safe and mine cells
-knowledge=[ [{'A','B','C'},1],
-            [{'A','C','D'},2],
-            [{'B','C','D','E','F'},3] ]
+
+
+knowledge=[ [{(0,1),(1,0),(1,1)},1],
+            [{(0,1),(1,1),(1,2)},2],
+            [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
+# knowledge=[ [{(0,1),(1,0),(1,1)},1],
+#             [{(1,1),(1,2)},2],
+#             [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
+
+# inf = basicInference(knowledge)
+# for eq in knowledge:
+#     print(eq)
+# print()
+
+# print("Inference is:",inf)
+# print()
+calculateprobability(knowledge)
+
+# newknow = calculateNewKnowledge(inf, knowledge)
+# for eq in newknow:
+#     print(eq)
 
 def advancedInference(knowledge):
     colOfVars = {}
@@ -92,6 +186,7 @@ def advancedInference(knowledge):
     inferredVars = {}
     for i in range(M_rref.shape[0]):
         if M_rref[i, M_rref.shape[1]-1] == 0:
+            # change this
             for j in range(M_rref.shape[1]-1):
                 if M_rref[i,j] != 0:
                     inferredVars[ M_rref[i,j] ] = 0
@@ -111,22 +206,24 @@ def advancedInference(knowledge):
                     elif M_rref[i,j] != 0:
                         inferredVars[ keys[position] ] = 0
             sumOfVars = 0
+
     print("INFERRED VARS",inferredVars)
+    return inferredVars
 
     # print(M_rref[2, M_rref.shape[1]-1])
 
     # print(M_rref[2,6])
     # print(M_rref.shape)
 
-advancedInference(knowledge)
+# advancedInference(knowledge)
 
-def runAdvanced(knowledge):
-    while (true):
-        inferredVars = advancedInference(knowledge)
-        if len(inferredVars) == 0:
-            return knowledge
-        else:
-            # update knowledge to remove all of the inferred variables
+# def runAdvanced(knowledge):
+#     while (true):
+#         inferredVars = advancedInference(knowledge)
+#         if len(inferredVars) == 0:
+#             return knowledge
+#         else:
+#             # update knowledge to remove all of the inferred variables
 
 # A+B+C=1
 # A+C+D=2
