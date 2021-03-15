@@ -119,13 +119,13 @@ def basicAgent (realGrid):
             knowledge = updateKnowledge((currX,currY), userGrid, knowledge)
 
             # Pick another random cell and queue it
-            if len(cellsDict)!=0:
-                randIndex = random.choice(list(cellsDict.keys()))
-                if randIndex not in queue:
-                    queue.append(randIndex)
-                    print("line 118")
-                    print(queue)
-                    print()
+            # if len(cellsDict)!=0:
+            #     randIndex = random.choice(list(cellsDict.keys()))
+            #     if randIndex not in queue:
+            #         queue.append(randIndex)
+            #         print("line 118")
+            #         print(queue)
+            #         print()
         
         else:
             # Get the clue from the real grid

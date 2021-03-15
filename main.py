@@ -5,13 +5,15 @@ from collections import deque
 from generateMine import generateMinesGrid
 from visualizeBoard import visualizeBoard
 from basicagent import basicAgent, finalScore
+from improvedAgent import improvedAgent
 
 def main():
 
-    dimension = 10
-    mines = 30
+    dimension = 5
+    mines = 5
     grid = generateMinesGrid(dimension, mines)
-    usergrid = basicAgent(grid)
+    # usergrid = basicAgent(grid)
+    usergrid = improvedAgent(grid)
     visualizeBoard(usergrid, "final basic agent")
     visualizeBoard(grid, "actual grid")
     score = finalScore(grid, usergrid)
