@@ -14,38 +14,38 @@ from collections import OrderedDict
 # {A:0,B:0,C:1,D:1,E:,F:}
 
 def calculateNewKnowledge(inferredVars, knowledge):
-    print("Inferred Variables are:", inferredVars)
-    print("Knowledge base before inferring:")
-    for x in knowledge:
-        print(x)
-    print()
+    # print("Inferred Variables are:", inferredVars)
+    # print("Knowledge base before inferring:")
+    # for x in knowledge:
+    #     print(x)
+    # print()
     for eqn in knowledge:
-        print("Current eq:", eqn)
+        # print("Current eq:", eqn)
         eq0 = deepcopy(eqn[0])
         # print("Current eq0:", eq0)
         for var in eq0:
             # print("Current Var:", var)
-            if var in inferredVars:
+            if var in inferredVars and inferredVars[var] != None:
                 eqn[0].remove(var)
                 eqn[1] -= inferredVars[var]
         # if len(eqn[0])==0:
         #     print("Removed eq:",eqn[0])
         #     knowledge.remove(eqn)
-        print()
-    print("Knowledge base before removing:")
-    for x in knowledge:
-        print(x)
-    print()
+        # print()
+    # print("Knowledge base before removing:")
+    # for x in knowledge:
+    #     print(x)
+    # print()
     i = 0
     while i < len(knowledge):
         if len(knowledge[i][0]) == 0:
             knowledge.remove(knowledge[i])
         else:
             i+=1
-    print("Knowledge base after inferring:")
-    for x in knowledge:
-        print(x)
-    print()
+    # print("Knowledge base after inferring:")
+    # for x in knowledge:
+    #     print(x)
+    # print()
     return knowledge
 
 def calculateprobability(knowledge):
@@ -64,59 +64,118 @@ def calculateprobability(knowledge):
     knowledge2 = deepcopy(knowledge)
     # print("befor while",cellsInKnowledge)
     while(true):
+        cellsInKnowledge2 = deepcopy(cellsInKnowledge)
+        # print("im here again")
         for cell in cellsInKnowledge:
             # print("cell in for",cell)
-            cellsInKnowledge2 = deepcopy(cellsInKnowledge)
+            while(len(inferredVars)!=0):
+                inferredVars = basicInference(knowledge2)
+                knowledge2 = calculateNewKnowledge(inferredVars, knowledge2)
+                for var in inferredVars:
+                    cellsInKnowledge2[var] = inferredVars[var]
+
+            # inferredVars = basicInference(knowledge2)
+            # # print("Inferred Vars at 72:",inferredVars)
+
+            # knowledge2 = calculateNewKnowledge(inferredVars, knowledge2)
+            # # print("New Knowledge is at line 88:", knowledge2)
+            
+            # # print("this is inferred",inferredVars)
+            # for var in inferredVars:
+            #     # update the value in cellsInKnowledge
+            #     cellsInKnowledge2[var] = inferredVars[var]
+            # # print("CellsinKnowledge after inferrence:", cellsInKnowledge2)
+
             if cellsInKnowledge2[cell] == None:
+                # print("Exploring : ", cell)
+                stack.append((cell,deepcopy(cellsInKnowledge2)))
+                # print("Appended to the stack :", stack)
+                
                 cellsInKnowledge2[cell] = 0
-                stack.append((cell,cellsInKnowledge2))
+                # print("CellsinKnowledge here is : ", cellsInKnowledge2)
+
                 inferredVars[cell] = 0
                 # print("inferredVars after guess", inferredVars)
                 # print("befor", knowledge2)
                 knowledge2 = calculateNewKnowledge(inferredVars, knowledge2)
+                # print("Guessing ", cell, "to be 0")
+                # print("New Knowledge is:", knowledge2)
+                # print()
                 # inferredVars = runAdvanced
                 # print("after", knowledge2)
-                inferredVars = basicInference(knowledge2)
+                # inferredVars = {}
                 
-                # print("this is inferred",inferredVars)
-                for var in inferredVars:
-                    # update the value in cellsInKnowledge
-                    cellsInKnowledge2[var] = inferredVars[var]
+        possibilities.append(deepcopy(cellsInKnowledge2))
+        # print("Poss",cellsInKnowledge2)
 
         # possibilities.append(cellsInKnowledge2)
+        if len(stack)==0:
+            break
+
         val,cellsInKnowledge = stack.pop()
-        possibilities.append(cellsInKnowledge)
-        # print(count,": cellsInKnowledge2",cellsInKnowledge2)
+        # print("Val is:", val)
         
-        cellsInKnowledge[cell] = 1
-        knowledge2 = calculateNewKnowledge(inferredVars, knowledge)
+        cellsInKnowledge[val] = 1
+        # print("CellsinKnowledge is:", cellsInKnowledge)
+
+        inferredVars[val] = 1
+        # print("Old knowledge is:")
+        # for x in knowledge:
+        #     print(x)
+        # print()
+        knowledge2 = calculateNewKnowledge(cellsInKnowledge, deepcopy(knowledge))
+        # print("New knowledge is:")
+        # for x in knowledge2:
+        #     print(x)
         # inferredVars = runAdvanced(knowledge2)
         inferredVars = basicInference(knowledge2)
+        # print("Inferred Vars at 112: ", inferredVars)
+        # print()
         
         # print("length of stack",len(stack))
         # for item in stack:
         #     print(item)
         # print()
-
-        if len(stack) == 0:
-            break
+        # print()
+        # print()
 
         count+=1
-        if count == 1: break
-    # print("This is possibilities:", possibilities)
-    # for poss in possibilities:
-    #     print(poss)
+        # if count == 10: break
+    print("This is possibilities:")
+    for poss in possibilities:
+        print(poss)
+    for cell in cellsInKnowledge:
+        summ=0
+        for poss in possibilities:
+            if poss[cell]==1:
+                summ+=1
+        cellsInKnowledge[cell]= summ/len(possibilities)
+    print()
+    mini = 2
+    ans = 0
+    for x in cellsInKnowledge:
+        print(x, ":", cellsInKnowledge[x])
+        if cellsInKnowledge[x]<mini:
+            mini = cellsInKnowledge[x]
+            ans = x
+    print("Answer is :", ans)
+    return ans
 
 def basicInference(knowledge):
     inferredVars = {}
-
+    # for eqn in knowledge:
+    #     print(eqn)
+    # print()
     for equation in knowledge:
         if len(equation[0]) == equation[1]:
             for x,y in equation[0]:
                 inferredVars[(x,y)] = 1
+                # print((x,y), ":", 1)
         elif equation[1] == 0:
             for x,y in equation[0]:
                 inferredVars[(x,y)] = 0
+                # print((x,y), ":", 0)
+    # print("inferredVars:", inferredVars)
     return inferredVars
 
 # advancedInference
@@ -132,9 +191,13 @@ def basicInference(knowledge):
 knowledge=[ [{(0,1),(1,0),(1,1)},1],
             [{(0,1),(1,1),(1,2)},2],
             [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
+
 # knowledge=[ [{(0,1),(1,0),(1,1)},1],
 #             [{(1,1),(1,2)},2],
 #             [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
+
+# knowledge = [   [{(0,0), (1,0), (1,1), (1,2), (0,2)}, 1], 
+#                 [{(2,0), (1,0), (1,1), (1,2), (2,2)}, 2]  ]
 
 # inf = basicInference(knowledge)
 # for eq in knowledge:
