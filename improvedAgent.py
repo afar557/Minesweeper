@@ -18,6 +18,23 @@ from visualizeBoard import visualizeBoard
 # stack:A,B
 # {A:0,B:0,C:1,D:1,E:,F:}
 
+def checkPossibilities(possibilities, knowledge):
+    validPossibilities = []
+    for possibility in possibilities: 
+        valid = True
+        for eq in knowledge:
+            summation = 0
+            for var in eq[0]: 
+                if var in possibility: 
+                    summation +=possibility[var]
+            if summation != eq[1]:
+                valid = False
+                break
+        if valid == True: 
+            validPossibilities.append(possibility)
+
+    return validPossibilities
+
 def calculateNewKnowledge(inferredVars, knowledge):
     for eqn in knowledge:
         eq0 = deepcopy(eqn[0])
@@ -83,22 +100,14 @@ def calculateprobability(knowledge):
     # print("This is possibilities:")
     # for poss in possibilities:
     #     print(poss)
+    
     for cell in cellsInKnowledge:
         summ=0
         for poss in possibilities:
             if poss[cell]==1:
                 summ+=1
         cellsInKnowledge[cell]= summ/len(possibilities)
-    # print()
-    # mini = 2
-    # ans = 0
-    # for x in cellsInKnowledge:
-    #     print(x, ":", cellsInKnowledge[x])
-    #     if cellsInKnowledge[x]<mini:
-    #         mini = cellsInKnowledge[x]
-    #         ans = x
-    # print("Answer is :", ans)
-    # return ans
+    # print(cellsInKnowledge)
     return cellsInKnowledge
 
 def basicInference(knowledge):
@@ -281,18 +290,22 @@ def improvedAgent(realGrid):
         for x in knowledge:
             print(x)
         print()
-        inferredVars = advancedInference(deepcopy(knowledge))
-        print("Inferred Vars line line 285: ", inferredVars)
-        knowledge = calculateNewKnowledge(inferredVars, knowledge)
-        for var in inferredVars:
-            # print(var)
-            x,y = var
-            if inferredVars[(x,y)] == 1:
-                userGrid[x][y] = 'm'
-                cellsDict.pop((x,y))
-            elif inferredVars[(x,y)] == 0:
-                if (x,y) not in queue:
-                    queue.append((x,y))
+
+        while (true):
+            inferredVars = advancedInference(deepcopy(knowledge))
+            print("Inferred Vars line line 285: ", inferredVars)
+            knowledge = calculateNewKnowledge(inferredVars, knowledge)
+            for var in inferredVars:
+                # print(var)
+                x,y = var
+                if inferredVars[(x,y)] == 1:
+                    userGrid[x][y] = 'm'
+                    cellsDict.pop((x,y))
+                elif inferredVars[(x,y)] == 0:
+                    if (x,y) not in queue:
+                        queue.append((x,y))
+            if len(inferredVars) ==0:
+                break
 
         visualizeBoard(userGrid, "advanced agent")
 
@@ -323,11 +336,19 @@ def improvedAgent(realGrid):
                 if (ans == 0 or mini>0.3) and len(queue) == 0 :
                     print("picking from random line 324")
                     print("Knowledge line 325 is :", knowledge)
-                    randIndex = random.choice(list(cellsDict.keys()))
-                    while randIndex in queue:
+                    cellsInKnowledge = set()
+                    for eq in knowledge: 
+                        for var in eq[0]: 
+                            cellsInKnowledge.add(var)
+                    if (len(cellsInKnowledge) != len(cellsDict)):    
+                        print("picking a random line 331") 
                         randIndex = random.choice(list(cellsDict.keys()))
-                    queue.append(randIndex)
-                elif len(queue) == 0:
+
+                        while randIndex in queue or randIndex in cellsInKnowledge:
+                            randIndex = random.choice(list(cellsDict.keys()))
+                        queue.append(randIndex)
+
+                if len(queue) == 0 and ans!= 0:
                     print("picking from probability line 331")
                     if ans not in queue:
                         queue.append(ans)
@@ -357,16 +378,27 @@ def improvedAgent(realGrid):
 #             [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
 
 # knowledge = [   [{(0,0), (1,0), (1,1), (1,2), (0,2)}, 1], 
-#                 [{(2,0), (1,0), (1,1), (1,2), (2,2)}, 2]  ]
+                # [{(2,0), (1,0), (1,1), (1,2), (2,2)}, 2]  ]
 
 # knowledge = [ [{(4, 2), (3, 2)}, 1],
 # [{(2, 4), (4, 2), (2, 3), (3, 2)}, 2],
 # [{(2, 3), (2, 4)}, 1],
 # [{(1, 2), (2, 1), (3, 1), (1, 1), (2, 3), (3, 2), (1, 3)}, 2] ]
 
+# knowledge = [[{(2, 0), (2, 1)}, 1],
+# [{(1, 2), (2, 1), (2, 0), (0, 2)}, 2],
+# [{(0, 2), (1, 2)}, 1],
+# [{(1, 2), (2, 1), (3, 1), (2, 3), (3, 3), (3, 2), (1, 3)}, 2]]
+
+
 # inf = basicInference(knowledge)
 
-# calculateprobability(knowledge)
+# possibilities = calculateprobability(knowledge)
+# # print(possibilities)
+# validPoss = checkPossibilities(possibilities, knowledge)
+# # print (validPoss)
+# print("length of poss is ", len(possibilities), "len of valid is", len(validPoss))
+
 
 # print("Advanced", advancedInference(knowledge))
 
