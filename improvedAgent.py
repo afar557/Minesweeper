@@ -161,19 +161,32 @@ def advancedInference(knowledge):
     M_rref = matrix.rref()
     M_rref = M_rref[0]
 
-    # print("Matrix : {}".format(M_rref)) 
+    print("Matrix : {}".format(M_rref)) 
+    print()
     sumOfVars = 0
     inferredVars = {}
     for i in range(M_rref.shape[0]):
         if M_rref[i, M_rref.shape[1]-1] == 0:
             # change this
+            negativeSign = None
+            safe = True
+
             for j in range(M_rref.shape[1]-1):
-                if M_rref[i,j] != 0:
-                    keys = list(colOfVars.keys())
-                    values = list(colOfVars.values())
-                    position = values.index(j)
-                    inferredVars[ keys[position] ] = 0
-                    # inferredVars[ M_rref[i,j] ] = 0
+                if M_rref[i,j] > 0 and negativeSign == None:
+                    negativeSign = False
+                elif M_rref[i,j] < 0 and negativeSign == None:
+                    negativeSign = True
+                else:    
+                    if (M_rref[i,j] > 0 and negativeSign == True) or (M_rref[i,j] < 0 and negativeSign == False):
+                        safe = False
+                        break
+            if safe == True:
+                for j in range(M_rref.shape[1]-1):
+                    if M_rref[i,j] != 0:
+                        keys = list(colOfVars.keys())
+                        values = list(colOfVars.values())
+                        position = values.index(j)
+                        inferredVars[ keys[position] ] = 0
         else:
             for j in range(M_rref.shape[1]-1):
                 if (M_rref[i, M_rref.shape[1]-1] > 0 and M_rref[i,j] > 0) or (M_rref[i, M_rref.shape[1]-1] < 0 and M_rref[i,j] < 0):
@@ -220,6 +233,10 @@ def improvedAgent(realGrid):
         # Dequeue the cell
         currX, currY = queue.popleft()
 
+        # print("Knowledge base line 225 is:")
+        # for x in knowledge:
+        #     print(x)
+        # print()
         # Query the dequeued cell
         if realGrid[currX][currY] == 'M':
             # Mark it as a mine
@@ -231,6 +248,9 @@ def improvedAgent(realGrid):
 
             # Update knowledge base so that it removes the mine
             knowledge = updateKnowledge((currX,currY), userGrid, knowledge)
+            print("Knowledge base line 251 is:")
+            for x in knowledge:
+                print(x)
         
         else:
             # Get the clue from the real grid
@@ -242,16 +262,27 @@ def improvedAgent(realGrid):
 
             # add to knowldege base
             knowledge = addEquationToKnowledge((currX, currY), userGrid, knowledge)
+            print("Knowledge base line 265 is:")
+            for x in knowledge:
+                print(x)
 
             # update knowledge base
             knowledge = updateKnowledge((currX, currY), userGrid, knowledge)
+            print("Knowledge base line 271 is:")
+            for x in knowledge:
+                print(x)
 
             # Remove the index from the dictionary
             cellsDict.pop((currX,currY))
 
         # run advanced inference
         # NOTE: might need to run advance in a while loop until it returns no inferred Vars
-        inferredVars = advancedInference(knowledge)
+        print("Knowledge base line 280 is:")
+        for x in knowledge:
+            print(x)
+        print()
+        inferredVars = advancedInference(deepcopy(knowledge))
+        print("Inferred Vars line line 285: ", inferredVars)
         knowledge = calculateNewKnowledge(inferredVars, knowledge)
         for var in inferredVars:
             # print(var)
@@ -266,12 +297,13 @@ def improvedAgent(realGrid):
         visualizeBoard(userGrid, "advanced agent")
 
         if len(queue)==0:
+            # TRY TO SEE IF IT IS POSSIBLE TO PUT A CAP ON THE PROBABILITY SO IF PROB>0.3 PICK RANDOMLY
             if len(cellsDict)!=0:
-                print("queue is empty")
+                print("queue is empty line 302")
                 
                 # Find the probablity that the cells in knowledge to be a mine
-                probabilityOfCells = calculateprobability(knowledge)
-                print("Calculating probability:", probabilityOfCells)
+                probabilityOfCells = calculateprobability(deepcopy(knowledge))
+                print("Calculating probability line 282:", probabilityOfCells)
                 mini = 2
                 ans = 0
                 for (x,y) in probabilityOfCells:
@@ -288,15 +320,15 @@ def improvedAgent(realGrid):
                         if probabilityOfCells[(x,y)] < mini:
                             mini = probabilityOfCells[(x,y)]
                             ans = (x,y)
-                if ans == 0 and len(queue) == 0:
-                    print("picking from random")
-                    print("Knowledge is :", knowledge)
+                if (ans == 0 or mini>0.3) and len(queue) == 0 :
+                    print("picking from random line 324")
+                    print("Knowledge line 325 is :", knowledge)
                     randIndex = random.choice(list(cellsDict.keys()))
                     while randIndex in queue:
                         randIndex = random.choice(list(cellsDict.keys()))
                     queue.append(randIndex)
                 elif len(queue) == 0:
-                    print("picking from probability")
+                    print("picking from probability line 331")
                     if ans not in queue:
                         queue.append(ans)
 
@@ -317,8 +349,8 @@ def improvedAgent(realGrid):
 #             [{(0,1),(1,1),(1,2)},2],
 #             [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
 
-knowledge = [   [{(2, 4), (3, 4), (4, 3), (4, 2), (2, 3), (2, 2), (3, 2)}, 1],
-                [{(3, 4), (4, 3)}, 0]  ]
+# knowledge = [   [{(2, 4), (3, 4), (4, 3), (4, 2), (2, 3), (2, 2), (3, 2)}, 1],
+#                 [{(3, 4), (4, 3)}, 0]  ]
 
 # knowledge=[ [{(0,1),(1,0),(1,1)},1],
 #             [{(1,1),(1,2)},2],
@@ -327,8 +359,15 @@ knowledge = [   [{(2, 4), (3, 4), (4, 3), (4, 2), (2, 3), (2, 2), (3, 2)}, 1],
 # knowledge = [   [{(0,0), (1,0), (1,1), (1,2), (0,2)}, 1], 
 #                 [{(2,0), (1,0), (1,1), (1,2), (2,2)}, 2]  ]
 
+# knowledge = [ [{(4, 2), (3, 2)}, 1],
+# [{(2, 4), (4, 2), (2, 3), (3, 2)}, 2],
+# [{(2, 3), (2, 4)}, 1],
+# [{(1, 2), (2, 1), (3, 1), (1, 1), (2, 3), (3, 2), (1, 3)}, 2] ]
+
 # inf = basicInference(knowledge)
 
 # calculateprobability(knowledge)
 
-# print("heyy",advancedInference(knowledge))
+# print("Advanced", advancedInference(knowledge))
+
+#NOTE: if something was previously discovered make sure you do not add it to the knowledge base again
