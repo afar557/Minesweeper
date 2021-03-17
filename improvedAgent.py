@@ -11,11 +11,23 @@ from copy import deepcopy
 
 # {A:,B:,C:,D:,E:,F:}
 
-# stack: A
-# {A:0,B:,C:1,D:1,E:,F:}
+# NOTE dont need becuase all possibilities from probability are valid (uses inferred)
+# def checkPossibilities(possibilities, knowledge):
+#     validPossibilities = []
+#     for possibility in possibilities: 
+#         valid = True
+#         for eq in knowledge:
+#             summation = 0
+#             for var in eq[0]: 
+#                 if var in possibility: 
+#                     summation +=possibility[var]
+#             if summation != eq[1]:
+#                 valid = False
+#                 break
+#         if valid == True: 
+#             validPossibilities.append(possibility)
 
-# stack:A,B
-# {A:0,B:0,C:1,D:1,E:,F:}
+#     return validPossibilities
 
 def checkPossibilities(possibilities, knowledge):
     validPossibilities = []
