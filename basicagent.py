@@ -45,7 +45,7 @@ def getState (grid, index):
                 state["safeSquares"].append((x2,y2))
     return state
 
-def addEquationToKnowledge(index, grid, knowldege):
+def addEquationToKnowledge(index, grid, knowledge):
     x,y = index
     dimension = len(grid)
 
@@ -63,22 +63,22 @@ def addEquationToKnowledge(index, grid, knowldege):
             elif grid[x2][y2]=='?':
                 neighbors.add((x2,y2))
     
-    knowldege.append([neighbors,clue])
+    knowledge.append([neighbors,clue])
 
-    return knowldege
+    return knowledge
 
-def updateKnowledge(index, grid, knowldege):
+def updateKnowledge(index, grid, knowledge):
     x,y = index
 
     if grid[x][y] == 'M' or grid[x][y] == 'm':
-        for equation in knowldege:
+        for equation in knowledge:
             if (x,y) in equation[0]:
                 # remove the mine from left side of equation
                 equation[0].remove((x,y))
                 # subtract 1 from right side of equation
                 equation[1] -= 1
     else:
-        for equation in knowldege:
+        for equation in knowledge:
             if (x,y) in equation[0]:
                 # remove the safe cell from left side of equation
                 equation[0].remove((x,y))
@@ -94,7 +94,7 @@ def updateKnowledge(index, grid, knowldege):
             # otherwise increment bc nothing was removed, and need to move to next element
             i+=1
             
-    return knowldege
+    return knowledge
 
 def basicAgent (realGrid): 
     dimension = len(realGrid)
@@ -149,7 +149,7 @@ def basicAgent (realGrid):
             userGrid[currX][currY] = clue
             # visualizeBoard(userGrid, "basic agent")
 
-            # add to knowldege base
+            # add to knowledge base
             knowledge = addEquationToKnowledge((currX, currY), userGrid, knowledge)
 
             # update knowledge base
