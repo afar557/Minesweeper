@@ -57,62 +57,94 @@ def calculateNewKnowledge(inferredVars, knowledge):
 
     return knowledge
 
+# function finds all valid possibilities of all cells and returns a dict of cells with their probability of being a mine
 def calculateprobability(knowledge):
+    # initialize vars
     stack = []
     possibilities = []
+    # NOTE replace cellsInKnowledge w normal dict
     cellsInKnowledge = OrderedDict()
     inferredVars = {}
 
+    # create dict to hold all cellsInKnowledge with value of None
+    # cellsInKnowledge identifies if a cell has previously been visited
     for eqn in knowledge:
         for cell in eqn[0]:
             cellsInKnowledge[cell] = None
 
-    count = 0
+    # create deepcopy of original knowledge, so knowledge is maintained
     knowledge2 = deepcopy(knowledge)
 
+    # calculates all possibilities by trying 0 then 1 at each terminal node and inferring the remaining vars
     while(true):
 
+        #NOTE can be replaced w dict.copy() for faster processing
         cellsInKnowledge2 = deepcopy(cellsInKnowledge)
 
+        # guesses 0 at every terminal node and infers what other variables would be based on that assignment
         for cell in cellsInKnowledge:
-
             while(len(inferredVars)!=0):
+                # update inferred using basic inference
                 inferredVars = basicInference(knowledge2)
+                # update knowledge using new inferred vars
                 knowledge2 = calculateNewKnowledge(inferredVars, knowledge2)
+
+                # update value of cellsInKnowledge to whats inferred
                 for var in inferredVars:
                     cellsInKnowledge2[var] = inferredVars[var]
 
+            # nothing has been inferred about that cell, or this cell has not been guessed before
             if cellsInKnowledge2[cell] == None:
 
+                # add element we are guessing on to the stack along with inferences at that point (cellsInKnowledge2)
+                #NOTE can be replaced w dict.copy() for faster processing
                 stack.append((cell,deepcopy(cellsInKnowledge2)))
+
+                # guess 0, since this is initial guess on this index
                 cellsInKnowledge2[cell] = 0
+
+                # add current guess to inferred vars and update knowledge 
                 inferredVars[cell] = 0
                 knowledge2 = calculateNewKnowledge(inferredVars, knowledge2)
                 
+        # add the assumed possibility to list of possibilities 
+        #NOTE can be replaced w dict.copy() for faster processing  
         possibilities.append(deepcopy(cellsInKnowledge2))
 
+        # if every valid possibility has been explored, then exit while loop
         if len(stack)==0:
             break
 
+        # pop the last guessed element  
         val,cellsInKnowledge = stack.pop()
         
+        # guess 1, since 0 was guessed on this element beofre 
         cellsInKnowledge[val] = 1
-        inferredVars[val] = 1
 
+        # add current guess to inferred vars and update knowledge
+        inferredVars[val] = 1
         knowledge2 = calculateNewKnowledge(cellsInKnowledge, deepcopy(knowledge))
+
+        # try to infer using updated knowledge
         inferredVars = basicInference(knowledge2)
 
+    # TODO remove print
     # print("This is possibilities:")
     # for poss in possibilities:
     #     print(poss)
     
+    # calculate probability of each cell being a mine
     for cell in cellsInKnowledge:
         summ=0
         for poss in possibilities:
+            # if in any possibility a cell is a mine update sum
             if poss[cell]==1:
                 summ+=1
+        # divide sum by the number of possibilities
         cellsInKnowledge[cell]= summ/len(possibilities)
     # print(cellsInKnowledge)
+
+    # return dict of every cell and their probability 
     return cellsInKnowledge
 
 def basicInference(knowledge):
