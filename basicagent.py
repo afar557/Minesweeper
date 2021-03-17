@@ -110,7 +110,7 @@ def basicAgent (realGrid):
         if realGrid[currX][currY] == "M":
             # Mark it as a mine
             userGrid[currX][currY] = 'M'
-            visualizeBoard(userGrid, "basic agent")
+            # visualizeBoard(userGrid, "basic agent")
 
             # Remove the index from the dictionary
             cellsDict.pop((currX,currY))
@@ -133,7 +133,7 @@ def basicAgent (realGrid):
 
             # update clue in user grid and visualize it
             userGrid[currX][currY] = clue
-            visualizeBoard(userGrid, "basic agent")
+            # visualizeBoard(userGrid, "basic agent")
 
             # add to knowldege base
             knowledge = addEquationToKnowledge((currX, currY), userGrid, knowledge)
@@ -184,7 +184,7 @@ def basicAgent (realGrid):
                         print()
                 knowledge.remove(equation)
 
-        visualizeBoard(userGrid, "basic agent")
+        # visualizeBoard(userGrid, "basic agent")
 
         if len(queue)==0:
             if len(cellsDict)!=0:
@@ -200,7 +200,7 @@ def basicAgent (realGrid):
 
     for x,y in cellsDict:
         userGrid[x][y] = 'm'
-    visualizeBoard(userGrid, "basic agent")
+    # visualizeBoard(userGrid, "basic agent")
     return userGrid
 
 # grid = [[1, '?', 2],
