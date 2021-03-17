@@ -11,6 +11,9 @@ from copy import deepcopy
 #         knowledge.remove(knowledge[i])
 #     else:
 #         i+=1
+# NOTE fixed in updateKnowledge lines 86-96
+# FIXME if we try to make this change, we will have to either remove the equation or remove the vars
+# to be able to identify it as an empty equation - issue is both can lead to skipping?
 
 def finalScore (realGrid, userGrid):
     dimension = len(realGrid)
@@ -80,6 +83,17 @@ def updateKnowledge(index, grid, knowldege):
                 # remove the safe cell from left side of equation
                 equation[0].remove((x,y))
 
+    # use while loop to remove equations w empty LHS
+    i = 0
+    while i < len(knowledge):
+        # if equation at i is empty
+        if len(knowledge[i][0]) == 0:
+            # remove the equation from knowledge & dont increment i, bc i will be the next element
+            knowledge.remove(knowledge[i])
+        else:
+            # otherwise increment bc nothing was removed, and need to move to next element
+            i+=1
+            
     return knowldege
 
 def basicAgent (realGrid): 
@@ -173,16 +187,16 @@ def basicAgent (realGrid):
                     userGrid[x][y] = 'm'
                     cellsDict.pop((x,y))
                     knowledge = updateKnowledge((x,y), userGrid, knowledge)
-                knowledge.remove(equation)
+                # knowledge.remove(equation)
             elif equation[1] == 0:
                 # Enqueue every cell in hidden
                 for x,y in equation[0]:
                     if (x,y) not in queue:
                         queue.append((x,y))
-                        print("line 174")
-                        print(queue)
-                        print()
-                knowledge.remove(equation)
+                        # print("line 174")
+                        # print(queue)
+                        # print()
+                # knowledge.remove(equation)
 
         # visualizeBoard(userGrid, "basic agent")
 
