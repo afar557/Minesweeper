@@ -161,21 +161,17 @@ def basicInference(knowledge):
 
     return inferredVars
 
-# advancedInference
-#   create the matrix
-#   intitial dict = {}
-#   do rref on the matrix
-#   for each row in rref(matrix)
-#       do the inference rules
-#   return None if you cant infer anything
-#   return dict with safe and mine cells
-
+# does advancedInference by combining clues using RREF 
+# NOTE does this need to be changed to REF instead of RREF? something asma mentioned from office hrs idk
 def advancedInference(knowledge):
+
+    # TODO remove print
     # print("knowledge in advance")
     # for eqn in knowledge:
     #     print(eqn)
     # print()
 
+    # creates a dictionary with every variable and the col number they will be in the matrix
     colOfVars = {}
     count = 0
     for eqn in knowledge:
@@ -183,10 +179,13 @@ def advancedInference(knowledge):
             if var not in colOfVars:
                 colOfVars[var] = count
                 count += 1
-    # print("befor",colOfVars)
+
+    # initialize matrix
     matrix = Matrix()
     # print(len(knowledge))
     row = 0
+
+    # populate matrix
     for equation in knowledge:
         matrixRow = [0]*(len(colOfVars)+1)
         # print(matrixRow)
@@ -207,8 +206,8 @@ def advancedInference(knowledge):
     M_rref = matrix.rref()
     M_rref = M_rref[0]
 
-    print("Matrix : {}".format(M_rref)) 
-    print()
+    # print("Matrix : {}".format(M_rref)) 
+    # print()
     sumOfVars = 0
     inferredVars = {}
     for i in range(M_rref.shape[0]):
@@ -287,16 +286,16 @@ def improvedAgent(realGrid):
         if realGrid[currX][currY] == 'M':
             # Mark it as a mine
             userGrid[currX][currY] = 'M'
-            visualizeBoard(userGrid, "basic agent")
+            # visualizeBoard(userGrid, "basic agent")
 
             # Remove the index from the dictionary
             cellsDict.pop((currX,currY))
 
             # Update knowledge base so that it removes the mine
             knowledge = updateKnowledge((currX,currY), userGrid, knowledge)
-            print("Knowledge base line 251 is:")
-            for x in knowledge:
-                print(x)
+            # print("Knowledge base line 251 is:")
+            # for x in knowledge:
+            #     print(x)
         
         else:
             # Get the clue from the real grid
@@ -304,33 +303,26 @@ def improvedAgent(realGrid):
 
             # update clue in user grid and visualize it
             userGrid[currX][currY] = clue
-            visualizeBoard(userGrid, "basic agent")
+            # visualizeBoard(userGrid, "basic agent")
 
             # add to knowldege base
             knowledge = addEquationToKnowledge((currX, currY), userGrid, knowledge)
-            print("Knowledge base line 265 is:")
-            for x in knowledge:
-                print(x)
+            # print("Knowledge base line 265 is:")
+            # for x in knowledge:
+            #     print(x)
 
             # update knowledge base
             knowledge = updateKnowledge((currX, currY), userGrid, knowledge)
-            print("Knowledge base line 271 is:")
-            for x in knowledge:
-                print(x)
+            # print("Knowledge base line 271 is:")
+            # for x in knowledge:
+            #     print(x)
 
             # Remove the index from the dictionary
             cellsDict.pop((currX,currY))
 
-        # run advanced inference
-        # NOTE: might need to run advance in a while loop until it returns no inferred Vars
-        print("Knowledge base line 280 is:")
-        for x in knowledge:
-            print(x)
-        print()
-
         while (true):
             inferredVars = advancedInference(deepcopy(knowledge))
-            print("Inferred Vars line line 285: ", inferredVars)
+            # print("Inferred Vars line line 285: ", inferredVars)
             knowledge = calculateNewKnowledge(inferredVars, knowledge)
             for var in inferredVars:
                 # print(var)
@@ -344,7 +336,7 @@ def improvedAgent(realGrid):
             if len(inferredVars) ==0:
                 break
 
-        visualizeBoard(userGrid, "advanced agent")
+        # visualizeBoard(userGrid, "advanced agent")
 
         if len(queue)==0:
             # TRY TO SEE IF IT IS POSSIBLE TO PUT A CAP ON THE PROBABILITY SO IF PROB>0.3 PICK RANDOMLY
