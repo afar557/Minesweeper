@@ -341,46 +341,47 @@ def improvedAgent(realGrid):
         if len(queue)==0:
             # TRY TO SEE IF IT IS POSSIBLE TO PUT A CAP ON THE PROBABILITY SO IF PROB>0.3 PICK RANDOMLY
             if len(cellsDict)!=0:
-                print("queue is empty line 302")
+                # print("queue is empty line 302")
                 
-                # Find the probablity that the cells in knowledge to be a mine
-                probabilityOfCells = calculateprobability(deepcopy(knowledge))
-                print("Calculating probability line 282:", probabilityOfCells)
-                mini = 2
-                ans = 0
-                for (x,y) in probabilityOfCells:
-                    if probabilityOfCells[(x,y)] == 1 and userGrid[x][y] == '?':
-                        print("should have been caught in advanced inference")
-                        userGrid[x][y] = 'm'
-                        knowledge = updateKnowledge((x,y), userGrid, knowledge)
-                        cellsDict.pop((x,y))
-                    elif probabilityOfCells[(x,y)] == 0 and userGrid[x][y] == '?':
-                        if (x,y) not in queue:
-                            print("should have been caught in advanced inference")
-                            queue.append((x,y))
-                    else:
-                        if probabilityOfCells[(x,y)] < mini:
-                            mini = probabilityOfCells[(x,y)]
-                            ans = (x,y)
-                if (ans == 0 or mini>0.3) and len(queue) == 0 :
-                    print("picking from random line 324")
-                    print("Knowledge line 325 is :", knowledge)
-                    cellsInKnowledge = set()
-                    for eq in knowledge: 
-                        for var in eq[0]: 
-                            cellsInKnowledge.add(var)
-                    if (len(cellsInKnowledge) != len(cellsDict)):    
-                        print("picking a random line 331") 
-                        randIndex = random.choice(list(cellsDict.keys()))
+                # # Find the probablity that the cells in knowledge to be a mine
+                # probabilityOfCells = calculateprobability(deepcopy(knowledge))
+                # print("Calculating probability line 282:", probabilityOfCells)
+                # mini = 2
+                # ans = 0
+                # for (x,y) in probabilityOfCells:
+                #     if probabilityOfCells[(x,y)] == 1 and userGrid[x][y] == '?':
+                #         print("should have been caught in advanced inference")
+                #         userGrid[x][y] = 'm'
+                #         knowledge = updateKnowledge((x,y), userGrid, knowledge)
+                #         cellsDict.pop((x,y))
+                #     elif probabilityOfCells[(x,y)] == 0 and userGrid[x][y] == '?':
+                #         if (x,y) not in queue:
+                #             print("should have been caught in advanced inference")
+                #             queue.append((x,y))
+                #     else:
+                #         if probabilityOfCells[(x,y)] < mini:
+                #             mini = probabilityOfCells[(x,y)]
+                #             ans = (x,y)
+                # if (ans == 0 or mini>0.3) and len(queue) == 0 :
+                    # print("picking from random line 324")
+                    # print("Knowledge line 325 is :", knowledge)
+                    # cellsInKnowledge = set()
+                    # for eq in knowledge: 
+                    #     for var in eq[0]: 
+                    #         cellsInKnowledge.add(var)
+                    # if (len(cellsInKnowledge) != len(cellsDict)):    
+                        # print("picking a random line 331") 
+                randIndex = random.choice(list(cellsDict.keys()))
 
-                        while randIndex in queue or randIndex in cellsInKnowledge:
-                            randIndex = random.choice(list(cellsDict.keys()))
-                        queue.append(randIndex)
-
-                if len(queue) == 0 and ans!= 0:
-                    print("picking from probability line 331")
-                    if ans not in queue:
-                        queue.append(ans)
+                while randIndex in queue:
+                # or randIndex in cellsInKnowledge:
+                    randIndex = random.choice(list(cellsDict.keys()))
+                # print("Rand Index is", randIndex)
+                queue.append(randIndex)
+                # if len(queue) == 0 and ans!= 0:
+                #     print("picking from probability line 331")
+                #     if ans not in queue:
+                #         queue.append(ans)
 
     # for x,y in cellsDict:
     #     userGrid[x][y] = 'm'
@@ -432,3 +433,5 @@ def improvedAgent(realGrid):
 # print("Advanced", advancedInference(knowledge))
 
 #NOTE: if something was previously discovered make sure you do not add it to the knowledge base again
+# previously discovered = either marked as 'm' or added to queue, m is immediately marked
+# so if something is in queue then dont add to knowledge base
