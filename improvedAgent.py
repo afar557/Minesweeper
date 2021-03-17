@@ -1,12 +1,11 @@
 from basicagent import updateKnowledge, addEquationToKnowledge
-from sympy import *
-from copy import deepcopy
-from collections import OrderedDict
 from generateMine import generateMinesGrid, generateUserGrid
-from collections import deque
+from visualizeBoard import visualizeBoard
+
+from sympy import *
+from collections import OrderedDict, deque
 import random
 from copy import deepcopy
-from visualizeBoard import visualizeBoard
 
 # always do advanced inference on knowledge before calling probability
 
