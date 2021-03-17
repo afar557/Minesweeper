@@ -9,7 +9,6 @@ from copy import deepcopy
 
 # always do advanced inference on knowledge before calling probability
 
-# {A:,B:,C:,D:,E:,F:}
 
 # NOTE dont need becuase all possibilities from probability are valid (uses inferred)
 # def checkPossibilities(possibilities, knowledge):
@@ -29,36 +28,31 @@ from copy import deepcopy
 
 #     return validPossibilities
 
-def checkPossibilities(possibilities, knowledge):
-    validPossibilities = []
-    for possibility in possibilities: 
-        valid = True
-        for eq in knowledge:
-            summation = 0
-            for var in eq[0]: 
-                if var in possibility: 
-                    summation +=possibility[var]
-            if summation != eq[1]:
-                valid = False
-                break
-        if valid == True: 
-            validPossibilities.append(possibility)
-
-    return validPossibilities
-
+# takes into account inferred vars to update knowledge
+# FIXME isnt this function the same as updateKnowledge except it takes a dict instead of an index? 
 def calculateNewKnowledge(inferredVars, knowledge):
+
     for eqn in knowledge:
+        # make deepcopy of LHS of equation in knowledge
         eq0 = deepcopy(eqn[0])
         for var in eq0:
+            # if var is in inferred and has a value
             if var in inferredVars and inferredVars[var] != None:
+
+                # remove that var from LHS and update RHS with inference
+                # ??? will this also skip because of the remove? 
                 eqn[0].remove(var)
                 eqn[1] -= inferredVars[var]
 
+    # use while loop to remove equations w empty LHS
     i = 0
     while i < len(knowledge):
+        # if equation at i is empty
         if len(knowledge[i][0]) == 0:
+            # remove the equation from knowledge & dont increment i, bc i will be the next element
             knowledge.remove(knowledge[i])
         else:
+            # otherwise increment bc nothing was removed, and need to move to next element
             i+=1
 
     return knowledge
