@@ -6,7 +6,7 @@ from generateMine import generateMinesGrid
 from visualizeBoard import visualizeBoard
 from basicagent import basicAgent, finalScore
 from improvedAgent import improvedAgent
-from globalInformation import improvedAgent
+from globalInformation import globalImprovedAgent
 from betterDecisions import betterImprovedAgent
 
 def main():
@@ -19,7 +19,7 @@ def main():
     # grid = [[0, 1, 'M', 1, 0], [1, 2, 2, 1, 0], [3, 'M', 2, 0, 0], ['M', 'M', 3, 2, 2], ['M', 3, 2, 'M', 'M']]
     # usergrid = basicAgent(grid)
     # usergrid = improvedAgent(grid)
-    # usergrid= improvedAgent(grid, mines)
+    # usergrid= globalImprovedAgent(grid, mines)
     usergrid = betterImprovedAgent(grid)
     visualizeBoard(usergrid, "final basic agent")
     visualizeBoard(grid, "actual grid")

@@ -1,7 +1,7 @@
 from basicagent import updateKnowledge, addEquationToKnowledge
 from generateMine import generateMinesGrid, generateUserGrid
 from visualizeBoard import visualizeBoard
-from improvedAgent import calculateNewKnowledge, calculateprobability, basicInference, advancedInference 
+from improvedAgent import calculateNewKnowledge, calculateprobability, advancedInference 
 
 from sympy import *
 from collections import deque

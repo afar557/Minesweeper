@@ -1,14 +1,14 @@
 from basicagent import updateKnowledge, addEquationToKnowledge
 from generateMine import generateMinesGrid, generateUserGrid
 from visualizeBoard import visualizeBoard
-from improvedAgent import calculateNewKnowledge, calculateprobability, basicInference, advancedInference 
+from improvedAgent import calculateNewKnowledge, advancedInference 
 
 from sympy import *
 from collections import deque
 import random
 from copy import deepcopy
 
-def improvedAgent(realGrid, numOfMines):
+def globalImprovedAgent(realGrid, numOfMines):
     dimension = len(realGrid)
     # Generate the user board
     userGrid = generateUserGrid(dimension)
