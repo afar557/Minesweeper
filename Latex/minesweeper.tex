@@ -178,6 +178,13 @@ How frequently is your algorithm able to work out things that the basic agent ca
 
 \begin{solution}
 
+    \begin{figure}[h]
+	\centering
+	\IfFileExists{images/performance_plot.png}{\includegraphics[width=0.7\textwidth]{images/performance_plot.png}}{No Figure Yet}
+% 	\includegraphics[width=12cm]{dim100,50avg,step01}
+	\caption{Plot of a function of mine density and the average final score (safely identified mines / total mines) for the simple baseline algorithm and our improved algorithm for comparison using a dimension of 20 and average of 10 random boards per given mine density}
+	\end{figure}
+	
 	Our Strategy 3 algorithm SPOOFFs (Simulates Probability Of Our Future Fire) because TGIF(This Grid Is on Fire). It tries to account for unknown future by trying to predict the path of the fire. We do this in 2 ways. 
     \\\\
 	1. We employ a deterministic approach where we assume the fire will spread 100\% of the time to all nodes it could possibly spread to for each time step. Based on this we generate a 3-D maze which has a maze for each time step. The size of the 3-D maze is dependent on the distance from the current position to the fire which is calculated using Manhattan distance. Based on the number of time steps we traverse through the 3-D maze and try to get as far as we can with a deterministic approach. 
@@ -222,9 +229,10 @@ In the case of implementation constraints, what could you improve on?
     Strategies 1, 2, and 3 perform the same from p = 0 to p = 0.2. Strategy 3 spikes up around p = 0.3. Strategy 1 has a higher value of success compared to Strategy 2 for p = 0.4. Strategy 3 has the highest success value at p = 0.6 and p = 0.9 compared to Strategies 1 and 2. This is because Strategy 3 should perform better than Strategies 1 and 2 with higher p values.
 \end{solution}
 \smallskip
-\begin{problem}
-	If you had unlimited computational resources at your disposal, how could you improve on Strategy 3? 
-\end{problem}
+
+\textbf{Global Information: }
+	Suppose you were told in advance how many mines are on the board. Include this in your knowledge base. How did you model this? Regenerate the plot of mine density vs average final score with this extra information, and analyze the results.
+
 
 \smallskip
 
@@ -236,9 +244,10 @@ In the case of implementation constraints, what could you improve on?
 
 \smallskip
 
-\begin{problem}
-	If you could only take ten seconds between moves (rather than doing as much computation as you like), how would that change your strategy? Describe such a potential Strategy 4.
-\end{problem}
+\textbf{Better Decisions: }
+	In both the basic and improved agent, when nothing more could be inferred, the agent selects a covered cell at random. Build a better selection mechanism. How can you justify it? Regenerate the plot of mine density vs average final score with improved cell selection, and analyze the results.
+
+
 
 \smallskip
 

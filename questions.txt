@@ -10,3 +10,6 @@ Doesn't our advancedInferrence do basic as well?
 
 # stack:A,B
 # {A:0,B:0,C:1,D:1,E:,F:}
+
+does global info & better decisions part of the report only apply to improved or should those changes be made to both? 
+if our rref was way slower, can we use library?
