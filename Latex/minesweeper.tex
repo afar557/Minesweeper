@@ -81,7 +81,6 @@
 
 \textbf{Representation:}
 	How did you represent the board in your program, and how did you represent the information / knowledge that clue cells reveal? How could you represent inferred relationships between cells? 
-	 
 \begin{solution} \hfill \\
     $Board$: \\
     Our program used a 2-D array structure to represent the board. \\
@@ -96,7 +95,7 @@
     For the \=following board:\\
     \>[1] \=[A] \=[2] \\ 
     \>[B] \>[C] \>[D] \\
-    \>[E] \>[3 ] \>[F] \\\\
+    \>[E] \>[3] \>[F] \\\\
     
 	We use \=the following equation system to represent the relationship between cells: \\
 	\>A+B+C = 1 \\
@@ -110,47 +109,42 @@
 	    \>\>[ \{ (2,0),(1,0),(1,1),(1,2),(2,2) \} ,3] ]
 	\end{tabbing}
 	Each index could be 1 or 0 depending on whether or not it is a mine.
-%=====================================================
-% LaTeX Tip: The figure environment is used for displaying the figure. Inside that, we use \includegraphics for adding a different file for each of the figure.
-% What you need to do is to create your figure using any tool you like (including drawing it by hand and scanning it), turn it into a pdf, name it "tree[X].pdf" 
-% where you replace [X] by A,B,C, or D depending on which part you are solving (i.e., use treeA.pdf, treeB.pdf,...). Finally, copy the file in the same directory
-% as this template and you should see that getting compiled into your solution. You can change the width=0.5\textwidth command to fix the size of the figure
-% in the final PDF. Finally, if the figure appears in the next page, do not worry about it as they will still have the proper caption. 
-%=====================================================		
 \end{solution}
+
 \smallskip
 
 \textbf{Inference:}
 	When you collect a new clue, how do you model / process / compute the information you gain from it?
- In other words, how do you update your current state of knowledge based on that clue? 
-Does your program deduce everything it can from a given clue before continuing? If so, how can you be sure of this, and if not, how could you consider improving it? 
-
-	
-
-\smallskip
-
+    In other words, how do you update your current state of knowledge based on that clue? 
+    Does your program deduce everything it can from a given clue before continuing? If so, how can you be sure of this, and if not, how could you consider improving it? 
 \begin{solution} \hfill \\
-	If you want an algorithm that takes a maze and two locations within it, and determine whether one is reachable from the other $DFS$ is a better choice than $BFS$ because in this algorithm the optimal path does not matter. The purpose of $BFS$ is to find an optimal path but since we don't care about that we should choose the algorithm that uses less compute power, which is $DFS$.
+    \begin{tabbing}
+	In our \=program, uncovering a cell can yield two results: \\
+	\>a. T\=he uncovered cell is discovered to be a mine.\\
+	\>\>In this case, our program updates the knowledge base by going through every equation in\\ \>\>Knowledge and for every equation, removing the uncovered index from the set of indices and\\ \>\>subtracting 1 from the total of the equation\\\\
 	
-	\begin{figure}[h]
-	\centering
-	\IfFileExists{images/p2.png}{\includegraphics[width=0.7\textwidth]{images/p2.png}}{No Figure Yet}
-% 	\includegraphics[width=12cm]{dim100,50avg,step01}
-	\caption{Plot using a dimension of 100, average of 50, 0$<$p$<$1 with step = 0.1}
-	\end{figure}
+	\>\> For example, if (0,1) was discovered to be a mine, \\
+	\>\>the equation \{ (0,1),(1,0),(1,1) \} ,1] would be updated to \{ (1,0),(1,1) \} ,0] \\\\\\
 	
+	\>b. The uncovered cell is discovered to be a safe cell with a a clue.\\
+	\>\>In this case, our program uses the uncovered cell's clue and its neighbors to add a new\\ \>\>equation into Knowledge. After that, our program updates the knowledge base by going through\\
+	\>\>equation in Knowledge and for every equation, removing the uncovered index from the set of\\
+	\>\>indices.\\\\
+	
+	\>\>For example, if (0,0) was discovered to be safe with a clue of 1 in the following board:\\
+	\>\>[1] \=[A] \=[2] \\ 
+    \>\>[B] \>[C] \>[D] \\
+    \>\>[E] \>[3] \>[F] \\
+    \>\>Our program create a new equation: [\{ (0,1),(1,0),(1,1) \} ,1] and adds it to Knowledge after \\ \>\>which, it goes through knowledge and for every equation where (0,0) is present, it is removed.\\\\
+    
+    \>In both cases, after updating Knowledge, our program runs an Advanced Inference algorithm in a\\ \>loop updating Knowledge and the grid with its inferences until no more inferences can be made using\\ \> the information we have. Therefore, it is safe to conclude that our program deduces everything it can\\ \> from Knowledge before moving on.\\
+	\end{tabbing}
 \end{solution}
 
-
 \smallskip
-
 
 \textbf{Decisions:}
 	Given a current state of the board, and a state of knowledge about the board, how does your program decide which cell to search next? 
-	
-
-\smallskip
-
 \begin{solution}
     If there was no path from S to G then there would be no difference between the number of nodes explored. This is because A* and BFS each would try to exhaust every possible option and would therefore have the same number of nodes explored.
     
