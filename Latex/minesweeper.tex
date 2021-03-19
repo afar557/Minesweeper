@@ -80,7 +80,7 @@
 
 
 \textbf{Representation:}
-	How did you represent the board in your program, and how did you represent the information / knowledge that clue cells reveal? How could you represent inferred relationships between cells? 
+	How did you represent the board in your program, and how did you represent the information / knowledge that clue cells reveal? How could you represent inferred relationships between cells? \\
 \begin{solution} \hfill \\
     $Board$: \\
     Our program used a 2-D array structure to represent the board. \\
@@ -116,7 +116,7 @@
 \textbf{Inference:}
 	When you collect a new clue, how do you model / process / compute the information you gain from it?
     In other words, how do you update your current state of knowledge based on that clue? 
-    Does your program deduce everything it can from a given clue before continuing? If so, how can you be sure of this, and if not, how could you consider improving it? 
+    Does your program deduce everything it can from a given clue before continuing? If so, how can you be sure of this, and if not, how could you consider improving it? \\
 \begin{solution} \hfill \\
     \begin{tabbing}
 	In our \=program, uncovering a cell can yield two results: \\
@@ -146,15 +146,7 @@
 \textbf{Decisions:}
 	Given a current state of the board, and a state of knowledge about the board, how does your program decide which cell to search next? 
 \begin{solution}
-    If there was no path from S to G then there would be no difference between the number of nodes explored. This is because A* and BFS each would try to exhaust every possible option and would therefore have the same number of nodes explored.
-    
-	\begin{figure}[h]
-	\centering
-	\IfFileExists{images/dim100,50avg,step01.png}{\includegraphics[width=0.7\textwidth]{images/dim100,50avg,step01.png}}{No Figure Yet}
-% 	\includegraphics[width=12cm]{dim100,50avg,step01}
-	\caption{Plot using a dimension of 1000, average of 50, 0$<$p$<$1 with step = 0.01}
-	\end{figure}
-	
+	here
 \end{solution}
 
 \smallskip
