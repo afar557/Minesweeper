@@ -3,7 +3,7 @@ from generateMine import generateMinesGrid, generateUserGrid
 from visualizeBoard import visualizeBoard
 
 from sympy import *
-from collections import OrderedDict, deque
+from collections import deque
 import random
 from copy import deepcopy
 
@@ -63,7 +63,7 @@ def calculateprobability(knowledge):
     stack = []
     possibilities = []
     # NOTE replace cellsInKnowledge w normal dict
-    cellsInKnowledge = OrderedDict()
+    cellsInKnowledge = {}
     inferredVars = {}
 
     # create dict to hold all cellsInKnowledge with value of None
