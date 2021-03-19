@@ -13,3 +13,6 @@ Doesn't our advancedInferrence do basic as well?
 
 does global info & better decisions part of the report only apply to improved or should those changes be made to both? 
 if our rref was way slower, can we use library?
+using ref instead?
+
+play by play go to end? or only one iteration?
