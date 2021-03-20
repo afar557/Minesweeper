@@ -22,7 +22,7 @@ def improvedPlot():
 
         grid = generateMinesGrid(dimension, mines)
 
-        for i in range(20):
+        for i in range(10):
             grid = generateMinesGrid(dimension, mines)
             basicScore = finalScore(grid, basicAgent(grid))
             improvedScore = finalScore(grid, improvedAgent(grid))
@@ -38,8 +38,8 @@ def improvedPlot():
                 improvedSum += finalScore(grid, improvedAgent(grid))
             
             
-        basicSuccess.append(basicSum/20)
-        advancedSuccess.append(improvedSum/20)
+        basicSuccess.append(basicSum/10)
+        advancedSuccess.append(improvedSum/10)
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
@@ -64,7 +64,7 @@ def betterImprovedPlot():
 
         grid = generateMinesGrid(dimension, mines)
 
-        for i in range(20):
+        for i in range(10):
             grid = generateMinesGrid(dimension, mines)
             basicScore = finalScore(grid, basicAgent(grid))
             improvedScore = finalScore(grid, betterImprovedAgent(grid))
@@ -80,8 +80,8 @@ def betterImprovedPlot():
                 improvedSum += finalScore(grid, betterImprovedAgent(grid))
             
             
-        basicSuccess.append(basicSum/20)
-        advancedSuccess.append(improvedSum/20)
+        basicSuccess.append(basicSum/10)
+        advancedSuccess.append(improvedSum/10)
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
@@ -106,7 +106,7 @@ def globalImprovedPlot():
 
         grid = generateMinesGrid(dimension, mines)
 
-        for i in range(20):
+        for i in range(10):
             grid = generateMinesGrid(dimension, mines)
             basicScore = finalScore(grid, basicAgent(grid))
             improvedScore = finalScore(grid, globalImprovedAgent(grid, mines))
@@ -122,8 +122,8 @@ def globalImprovedPlot():
                 improvedSum += finalScore(grid, globalImprovedAgent(grid, mines))
             
             
-        basicSuccess.append(basicSum/20)
-        advancedSuccess.append(improvedSum/20)
+        basicSuccess.append(basicSum/10)
+        advancedSuccess.append(improvedSum/10)
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
