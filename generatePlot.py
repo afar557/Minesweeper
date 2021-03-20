@@ -4,36 +4,133 @@ import numpy as np
 from basicagent import basicAgent, finalScore
 from improvedAgent import improvedAgent
 from generateMine import generateMinesGrid
+from betterDecisions import betterImprovedAgent
+from globalInformation import globalImprovedAgent
 
-def getPlot():
+def improvedPlot():
     dimension = 20
     
     basicSuccess = []
     advancedSuccess = []
     mineDensity = []
 
-    for x in np.arange(1, 400, 10):
+    for x in np.arange(0, 400, 10):
         mines = x.item()
-        mineDensity.append(mines)
+        mineDensity.append(mines/(dimension*dimension))
         basicSum=0
         improvedSum=0
 
         grid = generateMinesGrid(dimension, mines)
 
-        for i in range(10):
+        for i in range(20):
             grid = generateMinesGrid(dimension, mines)
-            basicSum += finalScore(grid, basicAgent(grid))
-            improvedSum += finalScore(grid, improvedAgent(grid))
+            basicScore = finalScore(grid, basicAgent(grid))
+            improvedScore = finalScore(grid, improvedAgent(grid))
+
+            if (basicScore != 0):
+                basicSum += finalScore(grid, basicAgent(grid))/mines
+            else: 
+                basicSum += finalScore(grid, basicAgent(grid))
+
+            if (improvedScore != 0):
+                improvedSum += finalScore(grid, improvedAgent(grid))/mines
+            else: 
+                improvedSum += finalScore(grid, improvedAgent(grid))
             
-        basicSuccess.append(basicSum/10)
-        advancedSuccess.append(improvedSum/10)
+            
+        basicSuccess.append(basicSum/20)
+        advancedSuccess.append(improvedSum/20)
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
-    plt.xlabel('mine density')
+    plt.xlabel('percentage of mine density')
     plt.ylabel('avg rate of success')
-    # plt.title('# of nodes explored by BFS - # of nodes explored by A*  VS  obstacle density p ')
+    plt.title('Success rate of Improved Algorithm v Basic Algorithm')
     plt.legend()
     plt.show()
 
-getPlot()
+def betterImprovedPlot():
+    dimension = 20
+    
+    basicSuccess = []
+    advancedSuccess = []
+    mineDensity = []
+
+    for x in np.arange(0, 400, 10):
+        mines = x.item()
+        mineDensity.append(mines/(dimension*dimension))
+        basicSum=0
+        improvedSum=0
+
+        grid = generateMinesGrid(dimension, mines)
+
+        for i in range(20):
+            grid = generateMinesGrid(dimension, mines)
+            basicScore = finalScore(grid, basicAgent(grid))
+            improvedScore = finalScore(grid, betterImprovedAgent(grid))
+
+            if (basicScore != 0):
+                basicSum += finalScore(grid, basicAgent(grid))/mines
+            else: 
+                basicSum += finalScore(grid, basicAgent(grid))
+
+            if (improvedScore != 0):
+                improvedSum += finalScore(grid, betterImprovedAgent(grid))/mines
+            else: 
+                improvedSum += finalScore(grid, betterImprovedAgent(grid))
+            
+            
+        basicSuccess.append(basicSum/20)
+        advancedSuccess.append(improvedSum/20)
+
+    plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
+    plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
+    plt.xlabel('percentage of mine density')
+    plt.ylabel('avg rate of success')
+    plt.title('Success rate of Better Decisions Improved Algorithm v Basic Algorithm')
+    plt.legend()
+    plt.show()
+
+def globalImprovedPlot():
+    dimension = 20
+    
+    basicSuccess = []
+    advancedSuccess = []
+    mineDensity = []
+
+    for x in np.arange(0, 400, 10):
+        mines = x.item()
+        mineDensity.append(mines/(dimension*dimension))
+        basicSum=0
+        improvedSum=0
+
+        grid = generateMinesGrid(dimension, mines)
+
+        for i in range(20):
+            grid = generateMinesGrid(dimension, mines)
+            basicScore = finalScore(grid, basicAgent(grid))
+            improvedScore = finalScore(grid, globalImprovedAgent(grid, mines))
+
+            if (basicScore != 0):
+                basicSum += finalScore(grid, basicAgent(grid))/mines
+            else: 
+                basicSum += finalScore(grid, basicAgent(grid))
+
+            if (improvedScore != 0):
+                improvedSum += finalScore(grid, globalImprovedAgent(grid, mines))/mines
+            else: 
+                improvedSum += finalScore(grid, globalImprovedAgent(grid, mines))
+            
+            
+        basicSuccess.append(basicSum/20)
+        advancedSuccess.append(improvedSum/20)
+
+    plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
+    plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
+    plt.xlabel('percentage of mine density')
+    plt.ylabel('avg rate of success')
+    plt.title('Success rate of Global Info Improved Algorithm v Basic Algorithm')
+    plt.legend()
+    plt.show()
+
+improvedPlot()
