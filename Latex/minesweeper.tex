@@ -13,6 +13,7 @@
 \usepackage{fancyhdr}
 \usepackage{enumitem}
 \usepackage{graphicx}
+\usepackage{float}
 %=====================================================
 % Ignore This Part (But Do NOT Delete It:)
 %=====================================================
@@ -110,7 +111,6 @@
 	\end{tabbing}
 	Each index could be 1 or 0 depending on whether or not it is a mine.
 \end{solution}
-
 \smallskip
 
 \textbf{Inference:}
@@ -140,7 +140,6 @@
     \>In both cases, after updating Knowledge, our program runs an Advanced Inference algorithm in a\\ \>loop updating Knowledge and the grid with its inferences until no more inferences can be made using\\ \> the information we have. Therefore, it is safe to conclude that our program deduces everything it can\\ \> from Knowledge before moving on.\\
 	\end{tabbing}
 \end{solution}
-
 \smallskip
 
 \textbf{Decisions:}
@@ -161,16 +160,15 @@
 	Otherwise, our program de-queues and repeats all the steps mentioned above until all the cells on the board are\\ uncovered.
 	\end{tabbing}
 \end{solution}
-
 \smallskip
 
 \textbf{Performance: }
 	For a reasonably-sized board and a reasonable number of mines, include a play-by-play progression to completion or loss. Are there any points where your program makes a decision that you don’t agree with?
 Are there any points where your program made a decision that surprised you? 
 Why was your program able to make that decision? 
-\begin{solution} \hfill \\
+\begin{solution} \hfill
 
-    \begin{figure}[h]
+    \begin{figure}[H]
 	\centering
 	\IfFileExists{images/perf_1.png}{\includegraphics[width=0.6\textwidth]{images/perf_1.png}}{No Figure Yet}
     \IfFileExists{images/perf_2.png}{\includegraphics[width=0.6\textwidth]{images/perf_2.png}}{No Figure Yet}
@@ -180,20 +178,16 @@ Why was your program able to make that decision?
     There is one point where the algorithm queries a mine. It does this because it is forced to query a random cell because it cannot make anymore advanced inferences. If I were playing the game instead of choosing randomly I would choose a cell that are surrounded by smaller numbers such as 1’s so that it has a low probability of being a mine. Other than that there are not other decisions that surprised be or that I didn't’t agree with.
 
 \end{solution}
-
 \smallskip
 
 \textbf{Performance: }
 For a fixed, reasonable size of board, plot as a function of mine density the average final score (safely identified mines / total mines) for the simple baseline algorithm and your algorithm for comparison. This will require solving multiple random boards at a given density of mines to get good average score results.
 Does the graph make sense / agree with your intuition? When does minesweeper become ‘hard’?
 When does your algorithm beat the simple algorithm, and when is the simple algorithm better? Why?
-How frequently is your algorithm able to work out things that the basic agent cannot? 
+How frequently is your algorithm able to work out things that the basic agent cannot?
+\begin{solution} \hfill
 
-\smallskip
-
-\begin{solution}
-
-    \begin{figure}[h]
+    \begin{figure}[H]
 	\centering
 	\IfFileExists{images/performance_plot.png}{\includegraphics[width=0.7\textwidth]{images/performance_plot.png}}{No Figure Yet}
 % 	\includegraphics[width=12cm]{dim100,50avg,step01}
@@ -203,18 +197,13 @@ How frequently is your algorithm able to work out things that the basic agent ca
     Put answers here
 	
 \end{solution}
-
 \smallskip
 
 \textbf{Efficiency: }
 What are some of the space or time constraints you run into in implementing this program? 
 Are these problem specific constraints, or implementation specific constraints? 
 In the case of implementation constraints, what could you improve on?
-
-
-\smallskip
-
-\begin{solution} \hfil \\
+\begin{solution} \hfill \\
     Our improved agent works well with a board size of 20x20 and mine density of 30\% however when we increase that to 30x30 it is significantly slower.
     This problem is implementation specific and we could improve upon this by removing the various many deep copies we are performing. We perform a deep copy every time we update the knowledge base with the new inferences. This significantly increases the runtime and space so by removing it, we could improve the efficiency of our advanced agent.
 \end{solution}
@@ -223,13 +212,9 @@ In the case of implementation constraints, what could you improve on?
 
 \textbf{Global Information: }
 	Suppose you were told in advance how many mines are on the board. Include this in your knowledge base. How did you model this? Regenerate the plot of mine density vs average final score with this extra information, and analyze the results.
-
-\smallskip
-
 \begin{solution} \hfill \\
 	Answer goes here
 \end{solution}
-
 \smallskip
 
 \textbf{Better Decisions: }
