@@ -160,9 +160,16 @@ Why was your program able to make that decision?
 \smallskip
 
 \begin{solution} \hfill \\
-	Largest dimension we can solve using $DFS$ at p = 0.3 in $less$ than a minute: 4480\\
-	Largest dimension we can solve using $BFS$ at p = 0.3 in $less$ than a minute: 1680\\
-	Largest dimension we can solve using $A*$ at p = 0.3 in $less$ than a minute: 2500\\
+
+    \begin{figure}[h]
+	\centering
+	\IfFileExists{images/perf_1.png}{\includegraphics[width=0.6\textwidth]{images/perf_1.png}}{No Figure Yet}
+    \IfFileExists{images/perf_2.png}{\includegraphics[width=0.6\textwidth]{images/perf_2.png}}{No Figure Yet}
+	\end{figure}
+
+	This is a play-by-play progression of the advanced agent from start to completion (left to right) of a 6x6 minesweeper board with 10 mines. The white cells indicate cells that have not been uncovered, the green cells are safe cells that have been uncovered with their clue displayed, the Orange cells are the cells that are inferred to be mines, and the red cells are mines that were incorrectly uncovered by the agent. The first 3 actions of the advanced agent are similar to basic because it picks randomly from the board however it becomes interesting at the 4th move. The agent inferred that 2 cells are mines, indicated as orange. This is different than the basic agent because the simple inference rules that the basic agent uses would not be able to infer these cells as mines. As you can see the agent continues to make advance inferences such as this. It uses the combination of multiple equations in the knowledge base to make these advance inferences. 
+    There is one point where the algorithm queries a mine. It does this because it is forced to query a random cell because it cannot make anymore advanced inferences. If I were playing the game instead of choosing randomly I would choose a cell that are surrounded by smaller numbers such as 1’s so that it has a low probability of being a mine. Other than that there are not other decisions that surprised be or that I didn't’t agree with.
+
 \end{solution}
 
 \smallskip
@@ -172,7 +179,6 @@ For a fixed, reasonable size of board, plot as a function of mine density the av
 Does the graph make sense / agree with your intuition? When does minesweeper become ‘hard’?
 When does your algorithm beat the simple algorithm, and when is the simple algorithm better? Why?
 How frequently is your algorithm able to work out things that the basic agent cannot? 
-
 
 \smallskip
 
@@ -185,19 +191,7 @@ How frequently is your algorithm able to work out things that the basic agent ca
 	\caption{Plot of a function of mine density and the average final score (safely identified mines / total mines) for the simple baseline algorithm and our improved algorithm for comparison using a dimension of 20 and average of 10 random boards per given mine density}
 	\end{figure}
 	
-	Our Strategy 3 algorithm SPOOFFs (Simulates Probability Of Our Future Fire) because TGIF(This Grid Is on Fire). It tries to account for unknown future by trying to predict the path of the fire. We do this in 2 ways. 
-    \\\\
-	1. We employ a deterministic approach where we assume the fire will spread 100\% of the time to all nodes it could possibly spread to for each time step. Based on this we generate a 3-D maze which has a maze for each time step. The size of the 3-D maze is dependent on the distance from the current position to the fire which is calculated using Manhattan distance. Based on the number of time steps we traverse through the 3-D maze and try to get as far as we can with a deterministic approach. 
-	\\
-	If this deterministic approach is unable to reach the goal, we use 2. 
-	\\\\
-	2. We employ a probabilistic approach where we assume where the fire will spread by generating an average of 10 possible mazes for each time step with the actual value of q. The average maze holds a probability for each cell catching on fire. Using each resulting average maze we generate a 3-D maze that holds an average maze for each time step, the number of time steps depending upon the distance of the current position on the path from the fire. From the last position of the path we traverse through the maze, choosing the cell that has the least probability of catching on fire at each time step.
-	\\ 
-	Once we have traversed the length of the time steps calculated using the distance from the fire, if we have not reached the goal we revert to the deterministic approach once again.
-	\\\\
-	Our strategy 3 is done using $A*$. $A*$ typically uses a heuristic value that is derived from calculating the euclidean distance of the current position from the goal and adding that to the traversed distance. This value is appended to a priority queue, where values are then chosen and dequeued based on their priority (smaller distances have higher priority). We altered this algorithm for strategy 3 by instead including a priority value that consisted of a tuple of 2 values. Our first value in the tuple consisted of the probability of that cell catching on fire, as calculated in our 3-D maze, summed with the probability of fire on that path so far. The second value in the tuple was of the distance heuristic (euclidean) that is typically used in $A*$. This tuple sorts the queue in ascending based on the first value and sub-sorts in ascending order based on the second value. We employed the use of a tuple in our priority queue because we wanted to prioritize survivability over getting the shortest possible path. 
-	\\\\
-	To optimize our algorithm and to preserve compute power we performed a $DFS$ algorithm on our initial maze before the fire has spread (time step = 0) to ensure that finish is reachable from start initially. Otherwise, it returns the maze because there is no possible path to finish.
+    Put answers here
 	
 \end{solution}
 
@@ -211,35 +205,19 @@ In the case of implementation constraints, what could you improve on?
 
 \smallskip
 
-\begin{solution} \hfill
-    \begin{figure}[h]
-	\centering
-	\IfFileExists{images/p6.png}{\includegraphics[width=1.1\textwidth]{images/p6.png}}{No Figure Yet}
-% 	\includegraphics[width=12cm]{dim100,50avg,step01}
-	\caption{} 
-	\end{figure} 
-	\begin{center}
-	Strategy 1, Using a dimension of 100, average of 50, p=0.3, q with step of 0.1.
-	
-	Strategy 2, Using a dimension of 100, average of 50, p=0.3, q with step of 0.1.
-	
-	Strategy 3, Using a dimension of 10, average of 50, p=0.3, q with step of 0.1. 
-    \end{center}
-    
-    Strategies 1, 2, and 3 perform the same from p = 0 to p = 0.2. Strategy 3 spikes up around p = 0.3. Strategy 1 has a higher value of success compared to Strategy 2 for p = 0.4. Strategy 3 has the highest success value at p = 0.6 and p = 0.9 compared to Strategies 1 and 2. This is because Strategy 3 should perform better than Strategies 1 and 2 with higher p values.
+\begin{solution} \hfil \\
+    Our improved agent works well with a board size of 20x20 and mine density of 30\% however when we increase that to 30x30 it is significantly slower.
+    This problem is implementation specific and we could improve upon this by removing the various many deep copies we are performing. We perform a deep copy every time we update the knowledge base with the new inferences. This significantly increases the runtime and space so by removing it, we could improve the efficiency of our advanced agent.
 \end{solution}
 \smallskip
 
 \textbf{Global Information: }
 	Suppose you were told in advance how many mines are on the board. Include this in your knowledge base. How did you model this? Regenerate the plot of mine density vs average final score with this extra information, and analyze the results.
 
-
 \smallskip
 
 \begin{solution} \hfill \\
-	If we had unlimited computational resources we wouldn't need to rely on a deterministic approach to get a path. The purpose of our deterministic approach was to find a path from start to finish in less time because if there exists a path when q=1, that path exists for all other values of q. Using the deterministic approach in our algorithm reduces our computational power because using this approach does not require calculating an average of mazes. Therefore, we would completely rely on the probabilistic approach in order to find the path from start to finish. The probabilistic approach is a more accurate representation of the maze because it uses the real value of q instead of q=1 in order to sample what the fire looks like in future time steps. \\ \\
-	Another approach we could take if we had unlimited computational resources is to calculate the state of the fire as far into the future as possible (i.e. until the goal can be reached). In our current algorithm, we calculate the number of time steps to look ahead in the future by how far we are from the fire currently. This caps how far we look into the future but if we had unlimited computational resources we would not need to place a limit on the number of steps to look ahead. \\ \\
-    Lastly, we would want to increase the number of samples we use to average each probability maze for each time step. Currently, we are only sampling 10 mazes for each time step. By gathering more samples, we will have a more accurate picture of what the fire could look like at that time step. \\
+	Answer goes here
 \end{solution}
 
 \smallskip
@@ -252,15 +230,7 @@ In the case of implementation constraints, what could you improve on?
 \smallskip
 
 \begin{solution} \hfill \\
-     If we can only take 10 seconds between moves we would want to reduce the compute time our algorithm is taking. 
-     \\\\
-     Assuming the fire advances one step every 10 seconds, we would compute a path using BFS for as many neighboring layers we could reach within 5 seconds. From the last set of neighbors, we would compute the Manhattan distance from the goal and choose the path whose final layer leaves it closest to the goal. 
-     \\\\
-	 We would repeat this code until we either reach the goal, cannot move further due to a blockage, or the goal is on fire. 
-	 We are assigning 5 seconds to get as far as we can with our path because we anticipate that calculating the Manhattan distance and path of each neighbor will have a time complexity of less than or equal to 5 seconds. 
-	 
-	 
-% 	 If we can only take 10 seconds between moves we would want to reduce the compute time our algorithm is taking. A possible approach to this would be utilizing local search algorithms. The purpose of this would be because while finding the shortest path within these constraints might be impossible, finding a solution that can work, albeit not optimally, is preferable. 
+    Answer goes here
 \end{solution}
 
 \textbf{Work Distribution}
