@@ -7,40 +7,26 @@ from collections import deque
 import random
 from copy import deepcopy
 
-# always do advanced inference on knowledge before calling probability
+# NOTE: The improved agent uses an external library to calculate the rref of the matrix in order to get
+# a simplified system of equations for the knowledge base. The professor said it is okay to use an 
+# external library for this as long as it runs faster than our own implementation
 
-
-# NOTE dont need becuase all possibilities from probability are valid (uses inferred)
-# def checkPossibilities(possibilities, knowledge):
-#     validPossibilities = []
-#     for possibility in possibilities: 
-#         valid = True
-#         for eq in knowledge:
-#             summation = 0
-#             for var in eq[0]: 
-#                 if var in possibility: 
-#                     summation +=possibility[var]
-#             if summation != eq[1]:
-#                 valid = False
-#                 break
-#         if valid == True: 
-#             validPossibilities.append(possibility)
-
-#     return validPossibilities
-
-# takes into account inferred vars to update knowledge
 # FIXME isnt this function the same as updateKnowledge except it takes a dict instead of an index? 
-def calculateNewKnowledge(inferredVars, knowledge):
+# ANS: yes it is actually lol just realized
 
+# function to update the knowledge base given a set of inferred variables
+def calculateNewKnowledge(inferredVars, knowledge):
+    # for each equation in knowledge base
     for eqn in knowledge:
         # make deepcopy of LHS of equation in knowledge
         eq0 = deepcopy(eqn[0])
+        # for each variable in the equation
         for var in eq0:
             # if var is in inferred and has a value
             if var in inferredVars and inferredVars[var] != None:
-
                 # remove that var from LHS and update RHS with inference
                 # ??? will this also skip because of the remove? 
+                # no i dont think so
                 eqn[0].remove(var)
                 eqn[1] -= inferredVars[var]
 
@@ -57,6 +43,7 @@ def calculateNewKnowledge(inferredVars, knowledge):
 
     return knowledge
 
+# NOTE: This function is not used in improved agent. It is only used for extra credit purposes, see betterDecisions.py
 # function finds all valid possibilities of all cells and returns a dict of cells with their probability of being a mine
 def calculateprobability(knowledge):
     # initialize vars
@@ -97,7 +84,7 @@ def calculateprobability(knowledge):
             if cellsInKnowledge2[cell] == None:
 
                 # add element we are guessing on to the stack along with inferences at that point (cellsInKnowledge2)
-                #NOTE can be replaced w dict.copy() for faster processing
+                # NOTE can be replaced w dict.copy() for faster processing
                 stack.append((cell,deepcopy(cellsInKnowledge2)))
 
                 # guess 0, since this is initial guess on this index
@@ -108,7 +95,7 @@ def calculateprobability(knowledge):
                 knowledge2 = calculateNewKnowledge(inferredVars, knowledge2)
                 
         # add the assumed possibility to list of possibilities 
-        #NOTE can be replaced w dict.copy() for faster processing  
+        # NOTE can be replaced w dict.copy() for faster processing  
         possibilities.append(deepcopy(cellsInKnowledge2))
 
         # if every valid possibility has been explored, then exit while loop
@@ -127,11 +114,6 @@ def calculateprobability(knowledge):
 
         # try to infer using updated knowledge
         inferredVars = basicInference(knowledge2)
-
-    # TODO remove print
-    # print("This is possibilities:")
-    # for poss in possibilities:
-    #     print(poss)
     
     # calculate probability of each cell being a mine
     for cell in cellsInKnowledge:
@@ -142,35 +124,33 @@ def calculateprobability(knowledge):
                 summ+=1
         # divide sum by the number of possibilities
         cellsInKnowledge[cell]= summ/len(possibilities)
-    # print(cellsInKnowledge)
 
     # return dict of every cell and their probability 
     return cellsInKnowledge
 
+# function that uses basic inference rules to get inferences
 def basicInference(knowledge):
+    # initialize empty dictionary of inferredVars
     inferredVars = {}
-
+    # for each equation in knowledge base
     for equation in knowledge:
+        # if the number of neighbors equals the clue, all neighbors are mines
         if len(equation[0]) == equation[1]:
             for x,y in equation[0]:
                 inferredVars[(x,y)] = 1
-
+        # if the clue is 0, all the neighbors are safe
         elif equation[1] == 0:
             for x,y in equation[0]:
                 inferredVars[(x,y)] = 0
 
     return inferredVars
 
-# does advancedInference by combining clues using RREF 
-# NOTE does this need to be changed to REF instead of RREF? something asma mentioned from office hrs idk
+# funciton that does advancedInference by combining clues using RREF 
+# NOTE: Using rref to calculate a simplified version of system of equations my cause there to be minimal error
+# because there is a step in rref that divides an entire row by a coefficient to get a leading 1
+# therefor when we are equating the sum to the RHS, there might be a decimal issue
+# however, we decided that this is a vary small edge case and it didn't seem to be an issue overall.
 def advancedInference(knowledge):
-
-    # TODO remove print
-    # print("knowledge in advance")
-    # for eqn in knowledge:
-    #     print(eqn)
-    # print()
-
     # creates a dictionary with every variable and the col number they will be in the matrix
     colOfVars = {}
     count = 0
@@ -185,34 +165,25 @@ def advancedInference(knowledge):
     # print(len(knowledge))
     row = 0
 
-    # populate matrix
+    # populate matrix with either 0 or 1, last column is the clue
     for equation in knowledge:
         matrixRow = [0]*(len(colOfVars)+1)
-        # print(matrixRow)
-        # print(colOfVars)
         for var in equation[0]:
             if var in colOfVars:
-                # print('variable', var, 'col', colOfVars[var])
                 matrixRow[colOfVars[var]] = 1
-        # print(matrixRow)
         matrixRow[-1] = equation[1]
-        # print(matrixRow)
         matrix = matrix.row_insert(row, Matrix([matrixRow]))
         row += 1
-    # print("Matrix : {}".format(matrix)) 
-
-    # for some reason the order of the variables changes in the dict because sets are unordered
-
+    # calculate the rref of the matrix
     M_rref = matrix.rref()
     M_rref = M_rref[0]
 
-    # print("Matrix : {}".format(M_rref)) 
-    # print()
     sumOfVars = 0
     inferredVars = {}
+    # traverse through the matrix to see if we can infer anything
     for i in range(M_rref.shape[0]):
+        # if the RHS is 0, see if all the variables are positive or all negative
         if M_rref[i, M_rref.shape[1]-1] == 0:
-            # change this
             negativeSign = None
             safe = True
 
@@ -225,35 +196,38 @@ def advancedInference(knowledge):
                     if (M_rref[i,j] > 0 and negativeSign == True) or (M_rref[i,j] < 0 and negativeSign == False):
                         safe = False
                         break
+            # if the values are all positive or all negative, mark them all as safe cells
             if safe == True:
                 for j in range(M_rref.shape[1]-1):
                     if M_rref[i,j] != 0:
                         keys = list(colOfVars.keys())
                         values = list(colOfVars.values())
                         position = values.index(j)
+                        # add all cells to inferredVars with a value of 0 to say they are safe
                         inferredVars[ keys[position] ] = 0
+        # otherwise if RHS is not 0, sum all the coefficients to see if it equals RHS
         else:
             for j in range(M_rref.shape[1]-1):
+                # only sum the values on LHS if they have the same sign as RHS
                 if (M_rref[i, M_rref.shape[1]-1] > 0 and M_rref[i,j] > 0) or (M_rref[i, M_rref.shape[1]-1] < 0 and M_rref[i,j] < 0):
                     sumOfVars += M_rref[i,j]
+            # if the sum equals RHS, we know all values with same sign as RHS are mines and values with opposite sign are safe cells
             if sumOfVars == M_rref[i, M_rref.shape[1]-1]:
-                # print("helloooooo")
                 for j in range(M_rref.shape[1]-1):
                     keys = list(colOfVars.keys())
                     values = list(colOfVars.values())
-                    # print("keys contains ", keys)
-                    # print("values contains ", values)
                     position = values.index(j)
+                    # mars all values with same sign as RHS as mines
                     if (M_rref[i, M_rref.shape[1]-1] > 0 and M_rref[i,j] > 0) or (M_rref[i, M_rref.shape[1]-1] < 0 and M_rref[i,j] < 0):
-                        # make colOfVars an array maybe to improve runtime???
                         inferredVars[ keys[position] ] = 1
+                    # mark all values with opposite sign as safe cells
                     elif M_rref[i,j] != 0:
                         inferredVars[ keys[position] ] = 0
             sumOfVars = 0
 
-    # print("INFERRED VARS",inferredVars)
     return inferredVars
 
+# function for improved agent
 def improvedAgent(realGrid):
     dimension = len(realGrid)
     # Generate the user board
@@ -278,10 +252,6 @@ def improvedAgent(realGrid):
         # Dequeue the cell
         currX, currY = queue.popleft()
 
-        # print("Knowledge base line 225 is:")
-        # for x in knowledge:
-        #     print(x)
-        # print()
         # Query the dequeued cell
         if realGrid[currX][currY] == 'M':
             # Mark it as a mine
@@ -293,9 +263,6 @@ def improvedAgent(realGrid):
 
             # Update knowledge base so that it removes the mine
             knowledge = updateKnowledge((currX,currY), userGrid, knowledge)
-            # print("Knowledge base line 251 is:")
-            # for x in knowledge:
-            #     print(x)
         
         else:
             # Get the clue from the real grid
@@ -307,25 +274,24 @@ def improvedAgent(realGrid):
 
             # add to knowldege base
             knowledge = addEquationToKnowledge((currX, currY), userGrid, knowledge)
-            # print("Knowledge base line 265 is:")
-            # for x in knowledge:
-            #     print(x)
 
             # update knowledge base
             knowledge = updateKnowledge((currX, currY), userGrid, knowledge)
-            # print("Knowledge base line 271 is:")
-            # for x in knowledge:
-            #     print(x)
 
             # Remove the index from the dictionary
             cellsDict.pop((currX,currY))
 
+        # continuosly call advancedInference until it returns nothing
         while (true):
+            # call advanced inference
             inferredVars = advancedInference(deepcopy(knowledge))
-            # print("Inferred Vars line line 285: ", inferredVars)
+            # break out of loop if there are no inferred vars
+            if len(inferredVars) == 0:
+                break
+            # update the knowledge base with the new inferred Vars
             knowledge = calculateNewKnowledge(inferredVars, knowledge)
+            # update user grid with inferred vars
             for var in inferredVars:
-                # print(var)
                 x,y = var
                 if inferredVars[(x,y)] == 1:
                     userGrid[x][y] = 'm'
@@ -333,105 +299,17 @@ def improvedAgent(realGrid):
                 elif inferredVars[(x,y)] == 0:
                     if (x,y) not in queue:
                         queue.append((x,y))
-            if len(inferredVars) ==0:
-                break
-
+            
         # visualizeBoard(userGrid, "advanced agent")
 
+        # if the queue is empty and nothing is left to be inferred pick a random cell
         if len(queue)==0:
-            # TRY TO SEE IF IT IS POSSIBLE TO PUT A CAP ON THE PROBABILITY SO IF PROB>0.3 PICK RANDOMLY
             if len(cellsDict)!=0:
-                # print("queue is empty line 302")
-                
-                # # Find the probablity that the cells in knowledge to be a mine
-                # probabilityOfCells = calculateprobability(deepcopy(knowledge))
-                # print("Calculating probability line 282:", probabilityOfCells)
-                # mini = 2
-                # ans = 0
-                # for (x,y) in probabilityOfCells:
-                #     if probabilityOfCells[(x,y)] == 1 and userGrid[x][y] == '?':
-                #         print("should have been caught in advanced inference")
-                #         userGrid[x][y] = 'm'
-                #         knowledge = updateKnowledge((x,y), userGrid, knowledge)
-                #         cellsDict.pop((x,y))
-                #     elif probabilityOfCells[(x,y)] == 0 and userGrid[x][y] == '?':
-                #         if (x,y) not in queue:
-                #             print("should have been caught in advanced inference")
-                #             queue.append((x,y))
-                #     else:
-                #         if probabilityOfCells[(x,y)] < mini:
-                #             mini = probabilityOfCells[(x,y)]
-                #             ans = (x,y)
-                # if (ans == 0 or mini>0.3) and len(queue) == 0 :
-                    # print("picking from random line 324")
-                    # print("Knowledge line 325 is :", knowledge)
-                    # cellsInKnowledge = set()
-                    # for eq in knowledge: 
-                    #     for var in eq[0]: 
-                    #         cellsInKnowledge.add(var)
-                    # if (len(cellsInKnowledge) != len(cellsDict)):    
-                        # print("picking a random line 331") 
                 randIndex = random.choice(list(cellsDict.keys()))
 
                 while randIndex in queue:
-                # or randIndex in cellsInKnowledge:
                     randIndex = random.choice(list(cellsDict.keys()))
-                # print("Rand Index is", randIndex)
                 queue.append(randIndex)
-                # if len(queue) == 0 and ans!= 0:
-                #     print("picking from probability line 331")
-                #     if ans not in queue:
-                #         queue.append(ans)
 
-    # for x,y in cellsDict:
-    #     userGrid[x][y] = 'm'
     # visualizeBoard(userGrid, "basic agent")
     return userGrid
-
-# def runAdvanced(knowledge):
-#     while (true):
-#         inferredVars = advancedInference(knowledge)
-#         if len(inferredVars) == 0:
-#             return knowledge
-#         else:
-#             # update knowledge to remove all of the inferred variables
-
-# knowledge=[ [{(0,1),(1,0),(1,1)},1],
-#             [{(0,1),(1,1),(1,2)},2],
-#             [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
-
-# knowledge = [   [{(2, 4), (3, 4), (4, 3), (4, 2), (2, 3), (2, 2), (3, 2)}, 1],
-#                 [{(3, 4), (4, 3)}, 0]  ]
-
-# knowledge=[ [{(0,1),(1,0),(1,1)},1],
-#             [{(1,1),(1,2)},2],
-#             [{(1,0),(1,1),(1,2),(2,0),(2,2)},3] ]
-
-# knowledge = [   [{(0,0), (1,0), (1,1), (1,2), (0,2)}, 1], 
-                # [{(2,0), (1,0), (1,1), (1,2), (2,2)}, 2]  ]
-
-# knowledge = [ [{(4, 2), (3, 2)}, 1],
-# [{(2, 4), (4, 2), (2, 3), (3, 2)}, 2],
-# [{(2, 3), (2, 4)}, 1],
-# [{(1, 2), (2, 1), (3, 1), (1, 1), (2, 3), (3, 2), (1, 3)}, 2] ]
-
-# knowledge = [[{(2, 0), (2, 1)}, 1],
-# [{(1, 2), (2, 1), (2, 0), (0, 2)}, 2],
-# [{(0, 2), (1, 2)}, 1],
-# [{(1, 2), (2, 1), (3, 1), (2, 3), (3, 3), (3, 2), (1, 3)}, 2]]
-
-
-# inf = basicInference(knowledge)
-
-# possibilities = calculateprobability(knowledge)
-# # print(possibilities)
-# validPoss = checkPossibilities(possibilities, knowledge)
-# # print (validPoss)
-# print("length of poss is ", len(possibilities), "len of valid is", len(validPoss))
-
-
-# print("Advanced", advancedInference(knowledge))
-
-#NOTE: if something was previously discovered make sure you do not add it to the knowledge base again
-# previously discovered = either marked as 'm' or added to queue, m is immediately marked
-# so if something is in queue then dont add to knowledge base
