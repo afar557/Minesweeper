@@ -145,8 +145,21 @@
 
 \textbf{Decisions:}
 	Given a current state of the board, and a state of knowledge about the board, how does your program decide which cell to search next? 
-\begin{solution}
-	here
+\begin{solution} \hfill \\
+	We will be using an example to walk through how our program makes decision, given a user board that is completely hidden to the improved agent. 
+	\begin{tabbing}
+	Our program uses a queue in order to access cells. \\
+	The fir\=st ever cell is picked by our algorithm in random and en-queued, and at that point one of two things \\ could happen: \\
+	
+	\>a. T\=he uncovered cell is discovered to be a mine, in which case our knowledge base is updated to reflect\\ \>\>that. \\
+	\>b. The uncovered cell is discovered to be safe and reveals a clue, in which case our program uses the clue\\ \>\>to add an equation to the knowledge base and then updates our knowledge base. \\\\
+	
+	After updating the knowledge base in both cases, our program uses an advanced inference algorithm that uses\\ rref in order to make all possible inferences from the knowledge base. Our program does that by running the\\ advanced inference algorithm in a loop and updating the knowledge base with the inferences it produces, \\additionally en-queuing all of the cells inferred to be safe and marking those inferred to be mines on the board.\\ The loop runs until advanced inference can no longer return any inferences using the current knowledge base.\\\\
+	
+	If the queue is empty at that point, our program selects a cell at random from the covered cells in the board and\\ en-queues it\\\\
+	
+	Otherwise, our program de-queues and repeats all the steps mentioned above until all the cells on the board are\\ uncovered.
+	\end{tabbing}
 \end{solution}
 
 \smallskip
@@ -155,10 +168,6 @@
 	For a reasonably-sized board and a reasonable number of mines, include a play-by-play progression to completion or loss. Are there any points where your program makes a decision that you don’t agree with?
 Are there any points where your program made a decision that surprised you? 
 Why was your program able to make that decision? 
-
-
-\smallskip
-
 \begin{solution} \hfill \\
 
     \begin{figure}[h]
@@ -209,6 +218,7 @@ In the case of implementation constraints, what could you improve on?
     Our improved agent works well with a board size of 20x20 and mine density of 30\% however when we increase that to 30x30 it is significantly slower.
     This problem is implementation specific and we could improve upon this by removing the various many deep copies we are performing. We perform a deep copy every time we update the knowledge base with the new inferences. This significantly increases the runtime and space so by removing it, we could improve the efficiency of our advanced agent.
 \end{solution}
+
 \smallskip
 
 \textbf{Global Information: }
@@ -224,11 +234,6 @@ In the case of implementation constraints, what could you improve on?
 
 \textbf{Better Decisions: }
 	In both the basic and improved agent, when nothing more could be inferred, the agent selects a covered cell at random. Build a better selection mechanism. How can you justify it? Regenerate the plot of mine density vs average final score with improved cell selection, and analyze the results.
-
-
-
-\smallskip
-
 \begin{solution} \hfill \\
     Answer goes here
 \end{solution}
