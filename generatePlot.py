@@ -8,8 +8,8 @@ from betterDecisions import betterImprovedAgent
 from globalInformation import globalImprovedAgent
 
 def improvedPlot():
-    dimension = 10
-    average = 10
+    dimension = 20
+    average =10
     
     basicSuccess = []
     advancedSuccess = []
@@ -17,9 +17,15 @@ def improvedPlot():
 
     for x in np.arange(0, dimension**2, 10):
         mines = x.item()
+        # print("num of mines is ", mines)
         mineDensity.append(mines/(dimension*dimension))
         basicSum=0
         improvedSum=0
+
+        if mines ==0: 
+            basicSuccess.append(1)
+            advancedSuccess.append(1)
+            continue
 
         grid = generateMinesGrid(dimension, mines)
 
@@ -29,18 +35,22 @@ def improvedPlot():
             improvedScore = finalScore(grid, improvedAgent(grid))
 
             if (basicScore != 0):
-                basicSum += finalScore(grid, basicAgent(grid))/mines
+                basicSum += basicScore/mines
             else: 
-                basicSum += finalScore(grid, basicAgent(grid))
+                basicSum += basicScore
 
             if (improvedScore != 0):
-                improvedSum += finalScore(grid, improvedAgent(grid))/mines
+                improvedSum += improvedScore/mines
             else: 
-                improvedSum += finalScore(grid, improvedAgent(grid))
+                improvedSum += improvedScore
+
             
             
         basicSuccess.append(basicSum/average)
+        # print("basic sum is", basicSum/average)
         advancedSuccess.append(improvedSum/average)
+        # print("advanced sum is ", improvedSum/average)
+
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
@@ -51,8 +61,8 @@ def improvedPlot():
     plt.show()
 
 def betterImprovedPlot():
-    dimension = 10
-    average = 10
+    dimension = 20
+    average =10
     
     basicSuccess = []
     advancedSuccess = []
@@ -64,7 +74,17 @@ def betterImprovedPlot():
         basicSum=0
         improvedSum=0
 
+        if mines ==0: 
+            basicSuccess.append(1)
+            advancedSuccess.append(1)
+            continue
+
         grid = generateMinesGrid(dimension, mines)
+
+        if mines ==0: 
+            basicSuccess.append(1)
+            advancedSuccess.append(1)
+            continue
 
         for i in range(average):
             grid = generateMinesGrid(dimension, mines)
@@ -72,14 +92,14 @@ def betterImprovedPlot():
             improvedScore = finalScore(grid, betterImprovedAgent(grid))
 
             if (basicScore != 0):
-                basicSum += finalScore(grid, basicAgent(grid))/mines
+                basicSum += basicScore/mines
             else: 
-                basicSum += finalScore(grid, basicAgent(grid))
+                basicSum += basicScore
 
             if (improvedScore != 0):
-                improvedSum += finalScore(grid, betterImprovedAgent(grid))/mines
+                improvedSum += improvedScore/mines
             else: 
-                improvedSum += finalScore(grid, betterImprovedAgent(grid))
+                improvedSum += improvedScore
             
             
         basicSuccess.append(basicSum/average)
@@ -94,7 +114,7 @@ def betterImprovedPlot():
     plt.show()
 
 def globalImprovedPlot():
-    dimension = 10
+    dimension = 20
     average =10
     
     basicSuccess = []
@@ -107,6 +127,11 @@ def globalImprovedPlot():
         basicSum=0
         improvedSum=0
 
+        if mines ==0: 
+            basicSuccess.append(1)
+            advancedSuccess.append(1)
+            continue
+
         grid = generateMinesGrid(dimension, mines)
 
         for i in range(average):
@@ -115,14 +140,14 @@ def globalImprovedPlot():
             improvedScore = finalScore(grid, globalImprovedAgent(grid, mines))
 
             if (basicScore != 0):
-                basicSum += finalScore(grid, basicAgent(grid))/mines
+                basicSum += basicScore/mines
             else: 
-                basicSum += finalScore(grid, basicAgent(grid))
+                basicSum += basicScore
 
             if (improvedScore != 0):
-                improvedSum += finalScore(grid, globalImprovedAgent(grid, mines))/mines
+                improvedSum += improvedScore/mines
             else: 
-                improvedSum += finalScore(grid, globalImprovedAgent(grid, mines))
+                improvedSum += improvedScore
             
             
         basicSuccess.append(basicSum/average)
