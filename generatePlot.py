@@ -14,7 +14,7 @@ def improvedPlot():
     basicSuccess = []
     advancedSuccess = []
     mineDensity = []
-    print("dim squared", dimension**2)
+
     for x in np.arange(0, dimension**2, 10):
         mines = x.item()
         mineDensity.append(mines/(dimension*dimension))
