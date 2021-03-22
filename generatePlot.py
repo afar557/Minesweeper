@@ -14,8 +14,8 @@ def improvedPlot():
     basicSuccess = []
     advancedSuccess = []
     mineDensity = []
-
-    for x in np.arange(0, dimension*2, 10):
+    print("dim squared", dimension**2)
+    for x in np.arange(0, dimension**2, 10):
         mines = x.item()
         mineDensity.append(mines/(dimension*dimension))
         basicSum=0
@@ -58,7 +58,7 @@ def betterImprovedPlot():
     advancedSuccess = []
     mineDensity = []
 
-    for x in np.arange(0, dimension*2, 10):
+    for x in np.arange(0, dimension**2, 10):
         mines = x.item()
         mineDensity.append(mines/(dimension*dimension))
         basicSum=0
@@ -101,7 +101,7 @@ def globalImprovedPlot():
     advancedSuccess = []
     mineDensity = []
 
-    for x in np.arange(0, dimension*2, 10):
+    for x in np.arange(0, dimension**2, 10):
         mines = x.item()
         mineDensity.append(mines/(dimension*dimension))
         basicSum=0
@@ -136,4 +136,4 @@ def globalImprovedPlot():
     plt.legend()
     plt.show()
 
-globalImprovedPlot()
+improvedPlot()
