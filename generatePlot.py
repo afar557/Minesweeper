@@ -61,7 +61,7 @@ def improvedPlot():
     plt.show()
 
 def betterImprovedPlot():
-    dimension = 20
+    dimension = 10
     average =10
     
     basicSuccess = []
@@ -161,4 +161,4 @@ def globalImprovedPlot():
     plt.legend()
     plt.show()
 
-improvedPlot()
+betterImprovedPlot()
