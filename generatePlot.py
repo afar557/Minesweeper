@@ -8,13 +8,14 @@ from betterDecisions import betterImprovedAgent
 from globalInformation import globalImprovedAgent
 
 def improvedPlot():
-    dimension = 20
+    dimension = 10
+    average = 10
     
     basicSuccess = []
     advancedSuccess = []
     mineDensity = []
 
-    for x in np.arange(0, 400, 10):
+    for x in np.arange(0, dimension*2, 10):
         mines = x.item()
         mineDensity.append(mines/(dimension*dimension))
         basicSum=0
@@ -22,7 +23,7 @@ def improvedPlot():
 
         grid = generateMinesGrid(dimension, mines)
 
-        for i in range(10):
+        for i in range(average):
             grid = generateMinesGrid(dimension, mines)
             basicScore = finalScore(grid, basicAgent(grid))
             improvedScore = finalScore(grid, improvedAgent(grid))
@@ -38,8 +39,8 @@ def improvedPlot():
                 improvedSum += finalScore(grid, improvedAgent(grid))
             
             
-        basicSuccess.append(basicSum/10)
-        advancedSuccess.append(improvedSum/10)
+        basicSuccess.append(basicSum/average)
+        advancedSuccess.append(improvedSum/average)
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
@@ -50,13 +51,14 @@ def improvedPlot():
     plt.show()
 
 def betterImprovedPlot():
-    dimension = 20
+    dimension = 10
+    average = 10
     
     basicSuccess = []
     advancedSuccess = []
     mineDensity = []
 
-    for x in np.arange(0, 400, 10):
+    for x in np.arange(0, dimension*2, 10):
         mines = x.item()
         mineDensity.append(mines/(dimension*dimension))
         basicSum=0
@@ -64,7 +66,7 @@ def betterImprovedPlot():
 
         grid = generateMinesGrid(dimension, mines)
 
-        for i in range(10):
+        for i in range(average):
             grid = generateMinesGrid(dimension, mines)
             basicScore = finalScore(grid, basicAgent(grid))
             improvedScore = finalScore(grid, betterImprovedAgent(grid))
@@ -80,8 +82,8 @@ def betterImprovedPlot():
                 improvedSum += finalScore(grid, betterImprovedAgent(grid))
             
             
-        basicSuccess.append(basicSum/10)
-        advancedSuccess.append(improvedSum/10)
+        basicSuccess.append(basicSum/average)
+        advancedSuccess.append(improvedSum/average)
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
@@ -92,13 +94,14 @@ def betterImprovedPlot():
     plt.show()
 
 def globalImprovedPlot():
-    dimension = 20
+    dimension = 10
+    average =10
     
     basicSuccess = []
     advancedSuccess = []
     mineDensity = []
 
-    for x in np.arange(0, 400, 10):
+    for x in np.arange(0, dimension*2, 10):
         mines = x.item()
         mineDensity.append(mines/(dimension*dimension))
         basicSum=0
@@ -106,7 +109,7 @@ def globalImprovedPlot():
 
         grid = generateMinesGrid(dimension, mines)
 
-        for i in range(10):
+        for i in range(average):
             grid = generateMinesGrid(dimension, mines)
             basicScore = finalScore(grid, basicAgent(grid))
             improvedScore = finalScore(grid, globalImprovedAgent(grid, mines))
@@ -122,8 +125,8 @@ def globalImprovedPlot():
                 improvedSum += finalScore(grid, globalImprovedAgent(grid, mines))
             
             
-        basicSuccess.append(basicSum/10)
-        advancedSuccess.append(improvedSum/10)
+        basicSuccess.append(basicSum/average)
+        advancedSuccess.append(improvedSum/average)
 
     plt.plot(mineDensity, basicSuccess, label = "Basic Algorithm")
     plt.plot(mineDensity, advancedSuccess, label = "Improved Algorithm")
@@ -133,4 +136,4 @@ def globalImprovedPlot():
     plt.legend()
     plt.show()
 
-improvedPlot()
+globalImprovedPlot()
