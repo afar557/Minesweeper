@@ -137,7 +137,16 @@
     \>\>[E] \>[3] \>[F] \\
     \>\>Our program create a new equation: [\{ (0,1),(1,0),(1,1) \} ,1] and adds it to Knowledge after \\ \>\>which, it goes through knowledge and for every equation where (0,0) is present, it is removed.\\\\
     
-    \>In both cases, after updating Knowledge, our program runs an Advanced Inference algorithm in a\\ \>loop updating Knowledge and the grid with its inferences until no more inferences can be made using\\ \> the information we have. Therefore, it is safe to conclude that our program deduces everything it can\\ \> from Knowledge before moving on.\\
+    \>In both cases, after updating Knowledge, our program runs an Advanced Inference algorithm in a\\ \>loop updating Knowledge and the grid with its inferences until no more inferences can be made using\\ \> the information we have. Therefore, it is safe to conclude that our program deduces everything it can\\ \> from Knowledge before moving on.\\\\
+    
+    \>Our Advanced Inference algorithm creates a m x (n+1) matrix with m=number of equations in knowledge,\\ \>and n=the number of variables in knowledge and one additional column for the clue. It uses the equations\\ \>in knowledge to fill the matrix, placing 1 if the variable is present and 0 if it is absent in the equation.\\ \> After setting up the matrix, it performs RREF on the matrix.\\
+    \>We used the following set of rules to translate the resulting matrix:\\
+    \>\>1. If the last column was $0$, and all the variables in the equation had the same sign (positive or negative),\\ \>\>then we infer that all those variables are safe. \\
+    \>\>2. If the last column was $negative$, then we would sum all the negative variables in the equation. If the\\ \>\>sum of those is equal to the value in the last column, then all the negative variables are mines and all\\ \>\>the positive ones are safe.\\
+    \>\>3. If the last column was $positive$, then we would sum all the positive variables in the equation. If the\\ \>\>sum of those is equal to the value in the last column, then all the negative variables are safe and all\\ \>\>the positive ones are mines.\\\\
+    
+    \> DISCLAIMER: We got permission from the Professor to use the Python library if our own RREF function\\ \>was working slower.\\\\
+    \> DISCLAIMER: Using rref to calculate a simplified version of system of equations may cause there to be\\ \>minimal error because there is a step in rref that divides an entire row by a coefficient to get a leading 1\\ \>therefor when we are equating the sum to the RHS, there might be a decimal issue however, we decided\\ \>that this is a vary small edge case and it didn't seem to be an issue overall. Moreover, this issue did not\\ \>appear in any of the our test cases.
 	\end{tabbing}
 \end{solution}
 \smallskip
