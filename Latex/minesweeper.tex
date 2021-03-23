@@ -78,8 +78,15 @@
 
 \thisheading
 
+\textbf{INTRODUCING ...} \\
+\begin{figure}[H]
+    \centering
+	\IfFileExists{images/RockOnBrotha.png}{\includegraphics[width=0.15\textwidth]{images/RockOnBrotha.png}}{No Figure Yet}
+	\end{figure}
+ \begin{center} \Large\emph{\textbf{The R.A.P. agent}}\\
+ \normalsize\emph{(RREF and Plug)} \end{center}
 
-
+\\\\\\
 \textbf{Representation:}
 	How did you represent the board in your program, and how did you represent the information / knowledge that clue cells reveal? How could you represent inferred relationships between cells? \\
 \begin{solution} \hfill \\
@@ -128,7 +135,7 @@
 	
 	\>b. The uncovered cell is discovered to be a safe cell with a a clue.\\
 	\>\>In this case, our program uses the uncovered cell's clue and its neighbors to add a new\\ \>\>equation into Knowledge. After that, our program updates the knowledge base by going through\\
-	\>\>equation in Knowledge and for every equation, removing the uncovered index from the set of\\
+	\>\>the equations in Knowledge and for every equation, removing the uncovered index from the set of\\
 	\>\>indices.\\\\
 	
 	\>\>For example, if (0,0) was discovered to be safe with a clue of 1 in the following board:\\
@@ -139,14 +146,14 @@
     
     \>In both cases, after updating Knowledge, our program runs an Advanced Inference algorithm in a\\ \>loop updating Knowledge and the grid with its inferences until no more inferences can be made using\\ \> the information we have. Therefore, it is safe to conclude that our program deduces everything it can\\ \> from Knowledge before moving on.\\\\
     
-    \>Our Advanced Inference algorithm creates a m x (n+1) matrix with m=number of equations in knowledge,\\ \>and n=the number of variables in knowledge and one additional column for the clue. It uses the equations\\ \>in knowledge to fill the matrix, placing 1 if the variable is present and 0 if it is absent in the equation.\\ \> After setting up the matrix, it performs RREF on the matrix.\\
+    \>Our Advanced Inference algorithm creates a m x (n+1) matrix with m=number of equations in knowledge,\\ \>and n=the number of variables in knowledge and one additional column for the clues. It uses the equations\\ \>in knowledge to fill the matrix, placing 1 if the variable is present and 0 if it is absent in the equation.\\ \> After setting up the matrix, it performs RREF on the matrix.\\
     \>We used the following set of rules to translate the resulting matrix:\\
     \>\>1. If the last column was $0$, and all the variables in the equation had the same sign (positive or negative),\\ \>\>then we infer that all those variables are safe. \\
     \>\>2. If the last column was $negative$, then we would sum all the negative variables in the equation. If the\\ \>\>sum of those is equal to the value in the last column, then all the negative variables are mines and all\\ \>\>the positive ones are safe.\\
     \>\>3. If the last column was $positive$, then we would sum all the positive variables in the equation. If the\\ \>\>sum of those is equal to the value in the last column, then all the negative variables are safe and all\\ \>\>the positive ones are mines.\\\\
     
     \> DISCLAIMER: We got permission from the Professor to use the Python library if our own RREF function\\ \>was working slower.\\\\
-    \> DISCLAIMER: Using rref to calculate a simplified version of system of equations may cause there to be\\ \>minimal error because there is a step in rref that divides an entire row by a coefficient to get a leading 1\\ \>therefor when we are equating the sum to the RHS, there might be a decimal issue however, we decided\\ \>that this is a vary small edge case and it didn't seem to be an issue overall. Moreover, this issue did not\\ \>appear in any of the our test cases.
+    \> DISCLAIMER: Using RREF to calculate a simplified version of system of equations may cause there to be\\ \>minimal error because there is a step in RREF that divides an entire row by a coefficient to get a leading 1\\ \>therefor when we are equating the sum to the RHS, there might be a decimal issue however, we decided\\ \>that this is a vary small edge case and it didn't seem to be an issue overall. Moreover, this issue did not\\ \>appear in any of the our test cases.
 	\end{tabbing}
 \end{solution}
 \smallskip
@@ -157,12 +164,12 @@
 	We will be using an example to walk through how our program makes decision, given a user board that is completely hidden to the improved agent. 
 	\begin{tabbing}
 	Our program uses a queue in order to access cells. \\
-	The fir\=st ever cell is picked by our algorithm in random and en-queued, and at that point one of two things \\ could happen: \\
+	The fir\=st ever cell is picked by our algorithm randomly and en-queued, and at that point one of two things \\ could happen: \\
 	
 	\>a. T\=he uncovered cell is discovered to be a mine, in which case our knowledge base is updated to reflect\\ \>\>that. \\
 	\>b. The uncovered cell is discovered to be safe and reveals a clue, in which case our program uses the clue\\ \>\>to add an equation to the knowledge base and then updates our knowledge base. \\\\
 	
-	After updating the knowledge base in both cases, our program uses an advanced inference algorithm that uses\\ rref in order to make all possible inferences from the knowledge base. Our program does that by running the\\ advanced inference algorithm in a loop and updating the knowledge base with the inferences it produces, \\additionally en-queuing all of the cells inferred to be safe and marking those inferred to be mines on the board.\\ The loop runs until advanced inference can no longer return any inferences using the current knowledge base.\\\\
+	After updating the knowledge base in both cases, our program uses an advanced inference algorithm that uses\\ RREF in order to make all possible inferences from the knowledge base. Our program does that by running the\\ advanced inference algorithm in a loop and updating the knowledge base with the inferences it produces, \\additionally en-queuing all of the cells inferred to be safe and marking those inferred to be mines on the board.\\ The loop runs until advanced inference can no longer return any inferences using the current knowledge base.\\\\
 	
 	If the queue is empty at that point, our program selects a cell at random from the covered cells in the board and\\ en-queues it\\\\
 	
@@ -183,8 +190,9 @@ Why was your program able to make that decision?
     \IfFileExists{images/perf_2.png}{\includegraphics[width=0.6\textwidth]{images/perf_2.png}}{No Figure Yet}
 	\end{figure}
 
-	This is a play-by-play progression of the advanced agent from start to completion (left to right) of a 6x6 minesweeper board with 10 mines. The white cells indicate cells that have not been uncovered, the green cells are safe cells that have been uncovered with their clue displayed, the Orange cells are the cells that are inferred to be mines, and the red cells are mines that were incorrectly uncovered by the agent. The first 3 actions of the advanced agent are similar to basic because it picks randomly from the board however it becomes interesting at the 4th move. The agent inferred that 2 cells are mines, indicated as orange. This is different than the basic agent because the simple inference rules that the basic agent uses would not be able to infer these cells as mines. As you can see the agent continues to make advance inferences such as this. It uses the combination of multiple equations in the knowledge base to make these advance inferences. 
-    There is one point where the algorithm queries a mine. It does this because it is forced to query a random cell because it cannot make anymore advanced inferences. If I were playing the game instead of choosing randomly I would choose a cell that are surrounded by smaller numbers such as 1’s so that it has a low probability of being a mine. Other than that there are not other decisions that surprised be or that I didn't’t agree with.
+	This is a play-by-play progression of the advanced agent from start to completion (left to right) of a 6x6 minesweeper board with 10 mines. The white cells indicate cells that have not been uncovered, the green cells are safe cells that have been uncovered with their clue displayed, the Orange cells are the cells that are inferred to be mines, and the red cells are mines that were incorrectly uncovered by the agent.\\
+	The first 3 actions of the advanced agent are similar to basic because it picks randomly from the board however it becomes interesting at the 4th move. The agent inferred that 2 cells are mines, indicated as orange. This is different than the basic agent because the simple inference rules that the basic agent uses would not be able to infer these cells as mines. As you can see the agent continues to make advanced inferences such as this. It uses the combination of multiple equations in the knowledge base to make these advanced inferences.\\
+    There is one point where the algorithm queries a mine. It does this because it is forced to query a random cell because it cannot make anymore advanced inferences. If I were playing the game instead of choosing randomly I would choose a cell that is surrounded by smaller numbers such as 1’s so that it has a low probability of being a mine. Other than that there are no other decisions that surprised me or that I didn't agree with.
 
 \end{solution}
 \smallskip
@@ -223,7 +231,7 @@ Are these problem specific constraints, or implementation specific constraints?
 In the case of implementation constraints, what could you improve on?
 \begin{solution} \hfill \\
     Our improved agent works well with a board size of 20x20 and mine density of 30\% however when we increase that to 30x30 it is significantly slower.
-    This problem is implementation specific and we could improve upon this by removing the various many deep copies we are performing. We perform a deep copy every time we update the knowledge base with the new inferences. This significantly increases the runtime and space so by removing it, we could improve the efficiency of our advanced agent.
+    This problem is implementation specific and we could improve upon this by removing the various deep copies we are performing. We perform a deep copy every time we update the knowledge base with the new inferences. This significantly increases the runtime and space so by removing it, we could improve the efficiency of our advanced agent.
 \end{solution}
 
 \smallskip
@@ -245,6 +253,11 @@ In the case of implementation constraints, what could you improve on?
 \textbf{Better Decisions: }
 	In both the basic and improved agent, when nothing more could be inferred, the agent selects a covered cell at random. Build a better selection mechanism. How can you justify it? Regenerate the plot of mine density vs average final score with improved cell selection, and analyze the results.
 \begin{solution} \hfill \\
+    \begin{figure}[H]
+	\centering
+	\IfFileExists{images/betterimproved_plot.png}{\includegraphics[width=0.7\textwidth]{images/betterimproved_plot.png}}{No Figure Yet}
+	\caption{Plot of a function of mine density and the average final score for the baseline algorithm and our better decisions improved algorithm using a dimension of 20 and average of 5 random boards per given mine density}
+	\end{figure}
     To build a better selection mechanism we used our knowledge base to map out every possibility of a cell being a mine or a clue and used every single possibility to generate the probability of every uncovered cell being a mine. \\If a cell was a mine in every possibility, or was a clue in every possibility then we would add that to our list of identified cells. If we still do not have an assurance of a safe cell we go to the cell with the least probability of being a mine as long as it's probability is less than 0.3. If the least probability is greater than 0.3 then we choose a random cell from the cells not in knowledge (i.e. the cells we do not have a probability of). 
     
     $On$ $a$ $micro$ $scale,$ $it$ $may$ $look$ $like$ $this$: 
@@ -315,11 +328,11 @@ To work on this project we would meet up over video calls daily and discuss prob
 \\\\
 The report was done similarly. We each took on a plot and a question to complete on our own. We then met to complete the rest as a group over video call. 
 \\
-$Asma$ $Makhdoom:$ Problem 2
+$Asma$ $Makhdoom:$ Performance Part 1 and Efficiency
 \\
-$Aamna$ $Farooq:$ Problem 3
+$Aamna$ $Farooq:$ Performance Part 2, Global Information and Better Decisions
 \\
-$Nada$ $Elshamaa:$ Problem 4 and Problem 6
+$Nada$ $Elshamaa:$ Representation, Inference and Decisions
 \\
 \smallskip
 
